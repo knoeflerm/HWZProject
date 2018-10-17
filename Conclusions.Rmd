@@ -116,7 +116,7 @@ Berechnen des Durchschnittalters pro Geschlecht:
 tapply(df$age,df$sex,mean,na.rm=T)
 ```
 
-Aus dem Dataframe der **`r nrow(df)`** Datensaetze hat die ersten **`r minObservations`** Datensaetze nehmen und daraus einen neuen erzeugen.
+Aus dem Dataframe der **`r nrow(df)`** Datensaetze hat, die ersten **`r minObservations`** Datensaetze nehmen und daraus einen neuen erzeugen.
 ```{r}
 sampleDf<-df[1:minObservations,]
 sampleDf
