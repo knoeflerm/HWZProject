@@ -204,3 +204,7 @@ plot(x = dfFeather[, 2], y = dfFeather[, 1], plt = c(0, 10, -5, 5), cex = 0.1, a
 ```{r}
 ggplot(df, aes(x=df$age,y=df$size))+geom_point()
 ```
+# Anhang
+```{r comment=''}
+cat(readLines('Conclusions.Rmd'), sep = '\n')
+```
