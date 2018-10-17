@@ -68,6 +68,7 @@ Es gibt verschiedene Moeglichkeiten Daten zu lesen. Der Readbefehl haengt vom Da
 ```{r}
 load("C:/Users/mknoefler/OneDrive/Documents/BigData/R/Umfrage.rda")
 ```
+
 Es ist ratsam sich anfangs jeweils einen groben Ueberblick ueber die geladenen Daten zu verschaffen. Dazu sind die Befehle **dim**, **summary**, **str** und **head** sehr hilfreich.\newline Alle Befehle in R sind online dokumentiert und koennen mit dem Fragezeichen (z.B. ?head) aufgerufen werden.
 ```{r}
 dim(Umfrage) # gibt Auskunft ueber die Dimension der Daten
@@ -75,6 +76,7 @@ summary(Umfrage) # zeigt deskriptive Statistiken an
 str(Umfrage) # zeigt die Eigenschaften (Variablen, Columns, ...) an
 head(Umfrage,5) # zeigt die ersten 10 Datensaetze an
 ```
+
 Im folgenden wird ein Data Frame mit verschiedenen, rein zufaelligen Werten erzeugt. Entweder wird ein Observations count via **Shiny App** als Parameter ins **RMarkdown** gegeben, ansonsten wird ein Defaultwert genommen.
 ```{r}
 minObservations<-10
@@ -103,35 +105,42 @@ head(df)
 # df$income.f<-as.factor(df$income,c(0,90000,130000,Inf))
 # df
 ```
+
 Es waere sehr verwunderlich, wenn es in diesem Dataframe zwei genau gleiche Datensaetze haette.
 ```{r}
 any(duplicated(df))
 ```
+
 Berechnen des Durchschnittalters pro Geschlecht:
 ```{r}
 tapply(df$age,df$sex,mean,na.rm=T)
 ```
+
 Aus dem Dataframe der **`r nrow(df)`** Datensaetze hat die ersten **`r minObservations`** Datensaetze nehmen und daraus einen neuen erzeugen.
 ```{r}
 sampleDf<-df[1:minObservations,]
 sampleDf
 ```
+
 Einen Dataframe aufsplitten, hier z.B. nach Geschlecht:
 ```{r}
 part.female<- split(sampleDf,sampleDf$sex)
 part.female
 ```
+
 Datensaetze mit gewissen Kriterien kann man auf verschiedene Arten auslesen, z.B. mit **which**, oder mit dem Befehl **subset**.
 ```{r}
 sampleDf[which(sampleDf$income>=140000),]
 subset(sampleDf,sampleDf$income>=140000)
 table(sampleDf$sex,sampleDf$education)
 ```
+
 Eine Haeufigkeitstabelle die aussagt, wieviele Frauen oder Maenner dieselbe Ausbildungsstufe haben. Dies kann mit den Befehlen **table** und **xtabs** bewerkstelligt werden.
 ```{r}
 table(sampleDf$sex,sampleDf$education)
 xtabs(~sex + education, data=sampleDf)
 ```
+
 Der Data Frame wird in eine Matrix konvertiert und mit anderen Spalten- und Zeilennamen versehen. Man beachte den Unterschied der Matrix wenn sie mit dem Befehl as.matrix(), oder data.matrix() konvertiert wurde.
 ```{r}
 columnNames<-c("ID","Geschl.","Alter","Groesse","Einkommen","Ausbildung", "Geschl.f")
@@ -148,6 +157,7 @@ dimnames(dataMatrix) <- list(rowNames,columnNames)
 dataMatrix<-subset(dataMatrix,select=-ID)
 head(dataMatrix,minObservations)
 ```
+
 # Tag 3
 Ein paar Plots und Histogramme auf dem originalen Dataframe. In den Grafikbeschreibungen ist jeweils der entsprechende R Code aufgefuehrt. Da saemtliche Daten im Dataframe zufaellig erzeugt wurden, sehen die Grafiken und Kurven natuerlich auch willkuerlich und etwas chaotisch aus. Ich musste allerdings das Dollar Zeichen mit einem Punkt ersetzen (z.B. df$age => df.age), da ansonsten RMarkdown (oder LaTeX) den Dollar interpretiert.
 
@@ -155,24 +165,30 @@ Ein paar Plots und Histogramme auf dem originalen Dataframe. In den Grafikbeschr
 hist(df$age, prob=T)
 lines(density(df$age),col="red")
 ```
+
 ```{r ,echo=FALSE, fig.cap="plot(df.age, df.income, type=\"p\")", fig.align="center"}
 plot(df$age, df$income, type="p")
 ```
+
 ```{r ,echo=FALSE, fig.cap="plot(df.income,main=\"Normalverteilung\")", fig.align="center"}
 plot(df$income,main="Normalverteilung")
 ```
+
 ```{r ,echo=FALSE, fig.cap="hist(df.income,main=\"Gleichverteilung\")", fig.align="center"}
 hist(df$income,main="Gleichverteilung")
 ```
+
 ```{r ,echo=FALSE, fig.cap="hist(df.income,main=\"Binomialverteilung\"))", fig.align="center"}
 hist(df$income,main="Binomialverteilung")
 ```
+
 ```{r ,echo=FALSE, fig.cap="hist(df.income,main=\"Normalverteilung\")", fig.align="center"}
 hist(df$income,main="Normalverteilung")
 ```
 
-# Tag 3.5
+## Tag 3.5
 An sich ein simpler Plot der jedoch schoen anzuschauen ist und vorallem die Daten aus einem clever kombinierten Dataframe bezieht. Eine an dieser Stelle zentrale Funktion ist **rbind()** welche jeweils die Zeilen eines Dataframes in einen neuen (oder wieder den urspruenglichen) merged. Dieses Beispiel stammt von <http://rstudio-pubs-static.s3.amazonaws.com/18905_c8e7a77909704e90a4a38cd3e8bc30f9.html>
+
 ```{r}
 iter <- 10000
 p <- runif(iter)
@@ -204,7 +220,13 @@ plot(x = dfFeather[, 2], y = dfFeather[, 1], plt = c(0, 10, -5, 5), cex = 0.1, a
 ```{r}
 ggplot(df, aes(x=df$age,y=df$size))+geom_point()
 ```
+
 # Anhang
+## RMarkdown code
 ```{r comment=''}
 cat(readLines('Conclusions.Rmd'), sep = '\n')
+```
+## Shiny app code
+```{r comment=''}
+cat(readLines('app.R'), sep = '\n')
 ```
