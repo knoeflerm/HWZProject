@@ -1,0 +1,206 @@
+---
+title: "Conclusions"
+author: "Markus Knoefler"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+params:
+  n: NA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+# Tag 1
+
+## Daten an der Uni St.Gallen
+* Polystrukturierte Daten
+    + Logdaten / Service Calls
+        - Koennen privacy-kritischen Inhalt haben
+    + WLan-Accespoint Daten
+        - Ort, Zeit, Dauer
+        - Geraet / OS
+        - Downloadmenge
+    + KPI's der Entwicklung
+        - Tickets
+        - Shift left
+        - Work in Progress
+        - Changesets
+        - Failed Builds/Tests
+* Fast nur strukturierte Daten
+    + Alles rund ums Studium (Addressdaten (mit Photo), Noten, Stundenplaene, Raumbelegungen, ...)
+
+## Smart Data - LogDaten
+* Hypothesen erstellen und formulieren was man gerne wissen moechte
+    + Immer zum Semesterstart, werden die Applikationen in die Knie gezwungen
+    + Probleme treten zyklisch auf
+* Definieren welche Daten/Werte es braucht, um die Hypothesen zu beweisen
+    + Datum, Zeit, Servicename (REST), aufrufende Applikation, OS, Credentials, Statuswerte des Aufrufes
+* Massnahmen ergreifen
+    + Beispiele koennten sein, ein Pikettdienst, gezielte efforts in Codestabilitaet/Bugfixing/Refactoring, temporaer mehr Serverpower
+    
+## Data mining in Wlan-Daten
+* Anomaly detection
+    +Kann Hinweis fuer ein kommendes Problem sein
+* Association Rule Learning
+    + Pruefungs- / Lernzeiten, Mensacrowd, Belegung der Lernplaetze
+* Clustering
+    + Evtl. legen bestimmte Benutzer- / Geraetegruppen unterschiedliche Verhalten an den Tag
+* Classification
+    +Navigationssystem fuer freie Plaetze zum lernen oder in der Mensa
+* Regression
+    + Anhand von Simulationen freie Plaetze in naher Zukunft vorschlagen
+* Summarization
+    + Geht meiner Meinung nach mit der Regression einher. Nur relevante Daten verwenden muessen, um dem Kunden die fuer ihn interessanten Conclusions visualisieren zu koennen
+
+<https://en.wikipedia.org/wiki/Data_mining>
+
+# Tag 2
+Es gibt verschiedene Moeglichkeiten Daten zu lesen. Der Readbefehl haengt vom Dateityp der Quelle ab. Die bis anhing fuer uns wichtigsten sind:
+
+* read.table("FullPath/FileName.txt")
+* read.csv("FullPath/FileName.csv")
+* read.xlsx("FullPath/FileName.xlsx")
+* und natuerlich die load() Funktion falls die Daten im R eigenen Format vorliegen.
+* weitere sind in der Dokumentation zu finden <https://www.statmethods.net/input/importingdata.html>
+\newline
+```{r}
+load("C:/Users/mknoefler/OneDrive/Documents/BigData/R/Umfrage.rda")
+```
+Es ist ratsam sich anfangs jeweils einen groben Ueberblick ueber die geladenen Daten zu verschaffen. Dazu sind die Befehle **dim**, **summary**, **str** und **head** sehr hilfreich.\newline Alle Befehle in R sind online dokumentiert und koennen mit dem Fragezeichen (z.B. ?head) aufgerufen werden.
+```{r}
+dim(Umfrage) # gibt Auskunft ueber die Dimension der Daten
+summary(Umfrage) # zeigt deskriptive Statistiken an
+str(Umfrage) # zeigt die Eigenschaften (Variablen, Columns, ...) an
+head(Umfrage,5) # zeigt die ersten 10 Datensaetze an
+```
+Im folgenden wird ein Data Frame mit verschiedenen, rein zufaelligen Werten erzeugt. Entweder wird ein Observations count via **Shiny App** als Parameter ins **RMarkdown** gegeben, ansonsten wird ein Defaultwert genommen.
+```{r}
+minObservations<-10
+if (params$n == "NA" | params$n < minObservations) {
+  observationCount<-minObservations
+} else {
+  observationCount<-params$n
+}
+ids<-seq(1,length=observationCount)
+head(ids)
+age<-round(runif(observationCount,min=18,max=100))
+head(age)
+sex<-sample(c("w","m"),size=observationCount,replace=T)
+head(sex)
+size<-round(runif(observationCount,min=150,max=200))
+head(size)
+income<-round(runif(observationCount,min=60000,max=180000))
+head(income)
+education<-sample(c("Grundschule","Lehre","Hochschule"),size=observationCount,replace=T)
+head(education)
+df<-data.frame(ids,sex,age,size,income,education)
+head(df,minObservations)
+df$sex.f<-as.factor(df$sex)
+dim(df)
+head(df)
+# df$income.f<-as.factor(df$income,c(0,90000,130000,Inf))
+# df
+```
+Es waere sehr verwunderlich, wenn es in diesem Dataframe zwei genau gleiche Datensaetze haette.
+```{r}
+any(duplicated(df))
+```
+Berechnen des Durchschnittalters pro Geschlecht:
+```{r}
+tapply(df$age,df$sex,mean,na.rm=T)
+```
+Aus dem Dataframe der **`r nrow(df)`** Datensaetze hat die ersten **`r minObservations`** Datensaetze nehmen und daraus einen neuen erzeugen.
+```{r}
+sampleDf<-df[1:minObservations,]
+sampleDf
+```
+Einen Dataframe aufsplitten, hier z.B. nach Geschlecht:
+```{r}
+part.female<- split(sampleDf,sampleDf$sex)
+part.female
+```
+Datensaetze mit gewissen Kriterien kann man auf verschiedene Arten auslesen, z.B. mit **which**, oder mit dem Befehl **subset**.
+```{r}
+sampleDf[which(sampleDf$income>=140000),]
+subset(sampleDf,sampleDf$income>=140000)
+table(sampleDf$sex,sampleDf$education)
+```
+Eine Haeufigkeitstabelle die aussagt, wieviele Frauen oder Maenner dieselbe Ausbildungsstufe haben. Dies kann mit den Befehlen **table** und **xtabs** bewerkstelligt werden.
+```{r}
+table(sampleDf$sex,sampleDf$education)
+xtabs(~sex + education, data=sampleDf)
+```
+Der Data Frame wird in eine Matrix konvertiert und mit anderen Spalten- und Zeilennamen versehen. Man beachte den Unterschied der Matrix wenn sie mit dem Befehl as.matrix(), oder data.matrix() konvertiert wurde.
+```{r}
+columnNames<-c("ID","Geschl.","Alter","Groesse","Einkommen","Ausbildung", "Geschl.f")
+rowNames<-NULL
+for (id in sampleDf$ids) {
+ rowNames <- c(rowNames,paste('Obs.', id, collapse = "," ))
+}
+asMatrix<-as.matrix(sampleDf)
+dimnames(asMatrix) <- list(rowNames,columnNames)
+asMatrix<-subset(asMatrix,select=-ID)
+head(asMatrix,minObservations)
+dataMatrix<-data.matrix(sampleDf)
+dimnames(dataMatrix) <- list(rowNames,columnNames)
+dataMatrix<-subset(dataMatrix,select=-ID)
+head(dataMatrix,minObservations)
+```
+# Tag 3
+Ein paar Plots und Histogramme auf dem originalen Dataframe. In den Grafikbeschreibungen ist jeweils der entsprechende R Code aufgefuehrt. Da saemtliche Daten im Dataframe zufaellig erzeugt wurden, sehen die Grafiken und Kurven natuerlich auch willkuerlich und etwas chaotisch aus. Ich musste allerdings das Dollar Zeichen mit einem Punkt ersetzen (z.B. df$age => df.age), da ansonsten RMarkdown (oder LaTeX) den Dollar interpretiert.
+
+```{r ,echo=FALSE, fig.cap="hist(df.age, prob=T) lines(density(df.age),col=\"red\")", fig.align="center"}
+hist(df$age, prob=T)
+lines(density(df$age),col="red")
+```
+```{r ,echo=FALSE, fig.cap="plot(df.age, df.income, type=\"p\")", fig.align="center"}
+plot(df$age, df$income, type="p")
+```
+```{r ,echo=FALSE, fig.cap="plot(df.income,main=\"Normalverteilung\")", fig.align="center"}
+plot(df$income,main="Normalverteilung")
+```
+```{r ,echo=FALSE, fig.cap="hist(df.income,main=\"Gleichverteilung\")", fig.align="center"}
+hist(df$income,main="Gleichverteilung")
+```
+```{r ,echo=FALSE, fig.cap="hist(df.income,main=\"Binomialverteilung\"))", fig.align="center"}
+hist(df$income,main="Binomialverteilung")
+```
+```{r ,echo=FALSE, fig.cap="hist(df.income,main=\"Normalverteilung\")", fig.align="center"}
+hist(df$income,main="Normalverteilung")
+```
+
+# Tag 3.5
+An sich ein simpler Plot der jedoch schoen anzuschauen ist und vorallem die Daten aus einem clever kombinierten Dataframe bezieht. Eine an dieser Stelle zentrale Funktion ist **rbind()** welche jeweils die Zeilen eines Dataframes in einen neuen (oder wieder den urspruenglichen) merged. Dieses Beispiel stammt von <http://rstudio-pubs-static.s3.amazonaws.com/18905_c8e7a77909704e90a4a38cd3e8bc30f9.html>
+```{r}
+iter <- 10000
+p <- runif(iter)
+coord <- matrix(c(0, 0), ncol = 1)
+dfFeather <- rbind(data.frame(), t(coord))
+for (i in 1:iter) {
+    if (p[i] <= 0.05) {
+        m <- matrix(c(0, 0, 0, 0.16), nrow = 2, ncol = 2)
+        const <- matrix(c(0, 0), ncol = 1)
+    } else if (p[i] > 0.05 && p[i] <= 0.86) {
+        m <- matrix(c(0.85, -0.04, 0.04, 0.85), nrow = 2, ncol = 2)
+        const <- matrix(c(0, 1.6), ncol = 1)
+    } else if (p[i] > 0.86 && p[i] <= 0.93) {
+        m <- matrix(c(0.2, 0.23, -0.26, 0.22), nrow = 2, ncol = 2)
+        const <- matrix(c(0, 1.6), ncol = 1)
+
+    } else {
+        m <- matrix(c(-0.15, 0.26, 0.28, 0.24), nrow = 2, ncol = 2)
+        const <- matrix(c(0, 0.44), ncol = 1)
+    }
+    coord <- m %*% coord + const
+    dfFeather <- rbind(dfFeather, t(coord))
+}
+plot(x = dfFeather[, 2], y = dfFeather[, 1], plt = c(0, 10, -5, 5), cex = 0.1, asp = 1)
+```
+
+# Tag 4
+
+```{r}
+ggplot(df, aes(x=df$age,y=df$size))+geom_point()
+```
