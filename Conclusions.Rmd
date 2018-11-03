@@ -2,7 +2,9 @@
 title: "Conclusions"
 author: "Markus Knoefler"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 params:
   n: NA
 ---
@@ -12,9 +14,10 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 ```
 
-# Tag 1
+#Zusammenfassung
+## Tag 1
 
-## Daten an der Uni St.Gallen
+### Daten an der Uni St.Gallen
 * Polystrukturierte Daten
     + Logdaten / Service Calls
         - Koennen privacy-kritischen Inhalt haben
@@ -31,7 +34,7 @@ library(ggplot2)
 * Fast nur strukturierte Daten
     + Alles rund ums Studium (Addressdaten (mit Photo), Noten, Stundenplaene, Raumbelegungen, ...)
 
-## Smart Data - LogDaten
+### Smart Data - LogDaten
 * Hypothesen erstellen und formulieren was man gerne wissen moechte
     + Immer zum Semesterstart, werden die Applikationen in die Knie gezwungen
     + Probleme treten zyklisch auf
@@ -40,7 +43,7 @@ library(ggplot2)
 * Massnahmen ergreifen
     + Beispiele koennten sein, ein Pikettdienst, gezielte efforts in Codestabilitaet/Bugfixing/Refactoring, temporaer mehr Serverpower
     
-## Data mining in Wlan-Daten
+### Data mining in Wlan-Daten
 * Anomaly detection
     +Kann Hinweis fuer ein kommendes Problem sein
 * Association Rule Learning
@@ -56,7 +59,7 @@ library(ggplot2)
 
 <https://en.wikipedia.org/wiki/Data_mining>
 
-# Tag 2
+## Tag 2
 Es gibt verschiedene Moeglichkeiten Daten zu lesen. Der Readbefehl haengt vom Dateityp der Quelle ab. Die bis anhing fuer uns wichtigsten sind:
 
 * read.table("FullPath/FileName.txt")
@@ -65,6 +68,7 @@ Es gibt verschiedene Moeglichkeiten Daten zu lesen. Der Readbefehl haengt vom Da
 * und natuerlich die load() Funktion falls die Daten im R eigenen Format vorliegen.
 * weitere sind in der Dokumentation zu finden <https://www.statmethods.net/input/importingdata.html>
 \newline
+
 ```{r}
 load("C:/Users/mknoefler/OneDrive/Documents/BigData/R/Umfrage.rda")
 ```
@@ -158,35 +162,31 @@ dataMatrix<-subset(dataMatrix,select=-ID)
 head(dataMatrix,minObservations)
 ```
 
-# Tag 3
-Ein paar Plots und Histogramme auf dem originalen Dataframe. In den Grafikbeschreibungen ist jeweils der entsprechende R Code aufgefuehrt. Da saemtliche Daten im Dataframe zufaellig erzeugt wurden, sehen die Grafiken und Kurven natuerlich auch willkuerlich und etwas chaotisch aus. Ich musste allerdings das Dollar Zeichen mit einem Punkt ersetzen (z.B. df$age => df.age), da ansonsten RMarkdown (oder LaTeX) den Dollar interpretiert.
+## Tag 3
+Einige Plots und Histogramme auf dem originalen Dataframe. Da saemtliche Daten im Dataframe zufaellig erzeugt wurden, sehen die Grafiken und Kurven natuerlich auch willkuerlich und etwas chaotisch aus.
 
-```{r ,echo=FALSE, fig.cap="hist(df.age, prob=T) lines(density(df.age),col=\"red\")", fig.align="center"}
+```{r ,echo=TRUE, fig.cap="Fig. 3.1 Histogramm mit Dichte (Normalverteilung)", fig.align="center"}
 hist(df$age, prob=T)
-lines(density(df$age),col="red")
+lines(density(df$age), col="red")
 ```
 
-```{r ,echo=FALSE, fig.cap="plot(df.age, df.income, type=\"p\")", fig.align="center"}
-plot(df$age, df$income, type="p")
+```{r ,echo=TRUE, fig.cap="Fig. 3.2 Scatterplot Einkommen nach Alter", fig.align="center"}
+plot(df$age, df$income, type="p", main="Scatterplot")
 ```
 
-```{r ,echo=FALSE, fig.cap="plot(df.income,main=\"Normalverteilung\")", fig.align="center"}
-plot(df$income,main="Normalverteilung")
+```{r ,echo=TRUE, fig.cap="Fig. 3.3 Scatterplot", fig.align="center"}
+plot(df$income, main="Scatterplot")
 ```
 
-```{r ,echo=FALSE, fig.cap="hist(df.income,main=\"Gleichverteilung\")", fig.align="center"}
-hist(df$income,main="Gleichverteilung")
+```{r ,echo=TRUE, fig.cap="Fig. 3.4 Histogramm Income", fig.align="center"}
+hist(df$income, main="Histogramm")
 ```
 
-```{r ,echo=FALSE, fig.cap="hist(df.income,main=\"Binomialverteilung\"))", fig.align="center"}
-hist(df$income,main="Binomialverteilung")
+```{r ,echo=TRUE, fig.cap="Fig. 3.5 Boxplot nach Income", fig.align="center"}
+boxplot(df$income, main="Boxplot")
 ```
+Ein Boxplot beinhaltet fuenf Informationen. Der dicke Strich im Kasten ist der Median, der obere und untere Rand des Kastens zeigen die Quantile Q1 (25% der Werte sind kleiner als dieser Wert) und Q3 (25% der Werte sind groesser als dieser Wert) an, der unterste Strich ist das Minimum und der oberste Strich das Maximum
 
-```{r ,echo=FALSE, fig.cap="hist(df.income,main=\"Normalverteilung\")", fig.align="center"}
-hist(df$income,main="Normalverteilung")
-```
-
-## Tag 3.5
 An sich ein simpler Plot der jedoch schoen anzuschauen ist und vorallem die Daten aus einem clever kombinierten Dataframe bezieht. Eine an dieser Stelle zentrale Funktion ist **rbind()** welche jeweils die Zeilen eines Dataframes in einen neuen (oder wieder den urspruenglichen) merged. Dieses Beispiel stammt von <http://rstudio-pubs-static.s3.amazonaws.com/18905_c8e7a77909704e90a4a38cd3e8bc30f9.html>
 
 ```{r}
@@ -215,8 +215,10 @@ for (i in 1:iter) {
 plot(x = dfFeather[, 2], y = dfFeather[, 1], plt = c(0, 10, -5, 5), cex = 0.1, asp = 1)
 ```
 
-# Tag 4
-
+## Tag 4
+### Hypothesen
+Hypothesen dienen der Management Beratung, oder sie kommen sogar aus dem Management.
+Am Anfang steht die Diagnose. Das Fachthema muss verstanden, das Problem genau identifiziert und es muss klar sein welche Daten benoetigt werden.
 ```{r}
 ggplot(df, aes(x=df$age,y=df$size))+geom_point()
 ```
@@ -228,5 +230,5 @@ cat(readLines('Conclusions.Rmd'), sep = '\n')
 ```
 ## Shiny app code
 ```{r comment=''}
-cat(readLines('app.R'), sep = '\n')
+cat(readLines('D:/Projects/HWZ/app.R'), sep = '\n')
 ```
