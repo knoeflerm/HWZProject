@@ -5,6 +5,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
     df_print: paged
+    toc: true
 params:
   n: NA
 ---
@@ -14,10 +15,9 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 ```
 
-#Zusammenfassung
-## Tag 1
+# Tag 1
 
-### Daten an der Uni St.Gallen
+## Daten an der Uni St.Gallen
 * Polystrukturierte Daten
     + Logdaten / Service Calls
         - Koennen privacy-kritischen Inhalt haben
@@ -34,7 +34,7 @@ library(ggplot2)
 * Fast nur strukturierte Daten
     + Alles rund ums Studium (Addressdaten (mit Photo), Noten, Stundenplaene, Raumbelegungen, ...)
 
-### Smart Data - LogDaten
+## Smart Data - LogDaten
 * Hypothesen erstellen und formulieren was man gerne wissen moechte
     + Immer zum Semesterstart, werden die Applikationen in die Knie gezwungen
     + Probleme treten zyklisch auf
@@ -43,7 +43,7 @@ library(ggplot2)
 * Massnahmen ergreifen
     + Beispiele koennten sein, ein Pikettdienst, gezielte efforts in Codestabilitaet/Bugfixing/Refactoring, temporaer mehr Serverpower
     
-### Data mining in Wlan-Daten
+## Data mining in Wlan-Daten
 * Anomaly detection
     +Kann Hinweis fuer ein kommendes Problem sein
 * Association Rule Learning
@@ -59,7 +59,7 @@ library(ggplot2)
 
 <https://en.wikipedia.org/wiki/Data_mining>
 
-## Tag 2
+# Tag 2
 Es gibt verschiedene Moeglichkeiten Daten zu lesen. Der Readbefehl haengt vom Dateityp der Quelle ab. Die bis anhing fuer uns wichtigsten sind:
 
 * read.table("FullPath/FileName.txt")
@@ -117,7 +117,7 @@ any(duplicated(df))
 
 Berechnen des Durchschnittalters pro Geschlecht:
 ```{r}
-tapply(df$age,df$sex,mean,na.rm=T)
+tapply(df$age, df$sex, mean, na.rm=T)
 ```
 
 Aus dem Dataframe der **`r nrow(df)`** Datensaetze hat, die ersten **`r minObservations`** Datensaetze nehmen und daraus einen neuen erzeugen.
@@ -128,15 +128,15 @@ sampleDf
 
 Einen Dataframe aufsplitten, hier z.B. nach Geschlecht:
 ```{r}
-part.female<- split(sampleDf,sampleDf$sex)
+part.female<- split(sampleDf, sampleDf$sex)
 part.female
 ```
 
 Datensaetze mit gewissen Kriterien kann man auf verschiedene Arten auslesen, z.B. mit **which**, oder mit dem Befehl **subset**.
 ```{r}
 sampleDf[which(sampleDf$income>=140000),]
-subset(sampleDf,sampleDf$income>=140000)
-table(sampleDf$sex,sampleDf$education)
+subset(sampleDf, sampleDf$income>=140000)
+table(sampleDf$sex, sampleDf$education)
 ```
 
 Eine Haeufigkeitstabelle die aussagt, wieviele Frauen oder Maenner dieselbe Ausbildungsstufe haben. Dies kann mit den Befehlen **table** und **xtabs** bewerkstelligt werden.
@@ -150,19 +150,19 @@ Der Data Frame wird in eine Matrix konvertiert und mit anderen Spalten- und Zeil
 columnNames<-c("ID","Geschl.","Alter","Groesse","Einkommen","Ausbildung", "Geschl.f")
 rowNames<-NULL
 for (id in sampleDf$ids) {
- rowNames <- c(rowNames,paste('Obs.', id, collapse = "," ))
+ rowNames <- c(rowNames, paste('Obs.', id, collapse = "," ))
 }
 asMatrix<-as.matrix(sampleDf)
-dimnames(asMatrix) <- list(rowNames,columnNames)
+dimnames(asMatrix) <- list(rowNames, columnNames)
 asMatrix<-subset(asMatrix,select=-ID)
-head(asMatrix,minObservations)
+head(asMatrix, minObservations)
 dataMatrix<-data.matrix(sampleDf)
-dimnames(dataMatrix) <- list(rowNames,columnNames)
-dataMatrix<-subset(dataMatrix,select=-ID)
-head(dataMatrix,minObservations)
+dimnames(dataMatrix) <- list(rowNames, columnNames)
+dataMatrix<-subset(dataMatrix, select=-ID)
+head(dataMatrix, minObservations)
 ```
 
-## Tag 3
+# Tag 3
 Einige Plots und Histogramme auf dem originalen Dataframe. Da saemtliche Daten im Dataframe zufaellig erzeugt wurden, sehen die Grafiken und Kurven natuerlich auch willkuerlich und etwas chaotisch aus.
 
 ```{r ,echo=TRUE, fig.cap="Fig. 3.1 Histogramm mit Dichte (Normalverteilung)", fig.align="center"}
@@ -215,20 +215,161 @@ for (i in 1:iter) {
 plot(x = dfFeather[, 2], y = dfFeather[, 1], plt = c(0, 10, -5, 5), cex = 0.1, asp = 1)
 ```
 
-## Tag 4
-### Hypothesen
-Hypothesen dienen der Management Beratung, oder sie kommen sogar aus dem Management.
-Am Anfang steht die Diagnose. Das Fachthema muss verstanden, das Problem genau identifiziert und es muss klar sein welche Daten benoetigt werden.
-```{r}
-ggplot(df, aes(x=df$age,y=df$size))+geom_point()
+# Tag 4
+Im weiteren werden nicht mehr alle R Code Snippets im Report ersichtlich sein (echo=FALSE). Das vollstaendige Markdown mit R-Code ist im Anhang ersichtlich.
+
+## Hypothesen
+Hypothesen dienen der **Management Beratung**, oder sie kommen sogar aus dem Management.
+
+* Am Anfang steht die **Diagnose**. Das Fachthema muss verstanden, das Problem genau identifiziert und es muss klar sein welche Daten benoetigt werden.
+* Nun kann eine **Hypothese** aufgestellt werden. Das Problem kann als hypothetische Ursache-Wirkung formuliert werden.
+* **Analyse** erstellen.Ursache-Wirkung anahnd von einem Datenmodell, Fragebogen erstellen. Entweder existieren bereits brauchbare Daten die gesammelt werden muessen, oder sie muessen erhoben werden.
+* Nun kann ein **Entscheid** formuliert werden. Besagt der Test, dass die Hypothese signifikant ist, koennen Handlungsoptionen agbeleitet werden und die Wirkung der Massnahmen (theoretisch) gemessen werden.
+Die **Qualitaet** des Entscheids haengt von drei Aspekten ab:
+    + **Repraesentativitaet**: Analyse wurde mit der korrekten Zielgruppe durchgefuehrt. Je groesser die Zielgruppe, desto besser
+    + **Signifikanz**: Das Resultat ist nicht zufaellig und ist bei einer zweiten Analyse in etwa gleich. Auch hier, je groesser n desto signifikanter
+    + **Relevanz**: Das Resultat der Analyse kann einen Entscheid untermauern und es koennen Prognosen gemacht werden.
+
+\
+Um etwas mit Daten spielen zu koennen, wird ein Dataframe d mit Zufallszahlen generiert (Copy Paste aus dem Skript).
+\
+Im folgenden Plot ist der Lohn nach Alter fuer die Branchen Finance, Industry und State und die Laender England, Schweiz und die USA aufgezeigt. Die Geschlechter werden mit unterschiedlichen Formen der Punkte unterschieden.
+
+\
+In Fig. 4.1 sind folgende Hypothesen ersichtlich:
+
+* Die Loehne unterscheiden sich in den Laendern und Branchen
+* Frauen verdienen mehr als Maenner
+* In der CH- und US-Industrie verdienen Maenner weniger je aelter sie werden, in allen anderen Branchen ist es umgekehrt.
+```{r echo=FALSE}
+set.seed(145) # generiert jedesmal die gleichen Werte
+n <- 500 # n ist die Anzahl Beobachtungen
+Land <- sample(c("CH", "USA", "GB"), n, replace = TRUE, prob = c(0.6, 0.25, 0.15))
+Geschl <- rep("X", n) # Dummy "X"
+Branche <- rep("X", n) # Dummy "X"
+Lohn <- rep(1, n) # Dummy "1"
+Alter <- rep(1, n) # Dummy "1"
+d <- data.frame(Land, Geschl, Branche, Alter, Lohn) # erstellt DataFrame
+
+######## Datengenerierung per Land #########################
+######### Daten f?r CH ###################
+d$Geschl <- ifelse(d$Land == "CH", sample(c("M", "F"), n, replace = TRUE, prob = c(0.65, 0.35)),d$Geschl)
+d$Branche <- ifelse(d$Land == "CH", sample(c("Fin", "Ind", "Sta"), n, replace = TRUE, prob = c(0.4,0.35,0.15)),d$Branche)
+d$Alter <- ifelse(d$Land == "CH", 20+30*rbeta(n, 5, 5), d$Alter)
+##### CH-M?nner
+d$Lohn <- ifelse(d$Land == "CH" & d$Branche == "Fin" & d$Geschl=="M",(1+runif(n))*d$Alter,d$Lohn)
+d$Lohn <- ifelse(d$Land == "CH" & d$Branche == "Ind" & d$Geschl=="M", -(1+runif(n))*d$Alter+120,d$Lohn)
+#d$Lohn <- ifelse(d$Land == "CH" & d$Branche == "Sta" & d$Geschl=="M",(1.5+runif(n))*d$Alter-20,d$Lohn)
+d$Lohn <- ifelse(d$Land == "CH" & d$Branche == "Sta" & d$Geschl=="M",10+runif(n)*d$Alter,d$Lohn)
+##### CH-Frauen
+d$Lohn <- ifelse(d$Land == "CH" & d$Branche == "Fin" & d$Geschl=="F",(1+runif(n))*d$Alter,d$Lohn)
+d$Lohn <- ifelse(d$Land == "CH" & d$Branche == "Ind" & d$Geschl=="F",(2+runif(n))*d$Alter,d$Lohn)
+d$Lohn <- ifelse(d$Land == "CH" & d$Branche == "Sta" & d$Geschl=="F",(1.5+runif(n))*d$Alter,d$Lohn)
+
+######### Daten f?r USA ###################
+d$Geschl <- ifelse(d$Land == "USA",sample(c("M","F"), n, replace = TRUE, prob = c(0.45,0.55)),d$Geschl)
+d$Branche <- ifelse(d$Land == "USA", sample(c("Fin","Ind","Sta"), n, replace = TRUE, prob = c(0.3,0.3,0.4)),d$Branche)
+
+##### USA-M?nner
+d$Alter <- ifelse(d$Land == "USA" & d$Geschl == "M",10+30*rbeta(n,5,5),d$Alter)
+d$Lohn <- ifelse(d$Land == "USA" & d$Branche == "Fin" & d$Geschl=="M",(1+runif(n))*d$Alter,d$Lohn)
+d$Lohn <- ifelse(d$Land == "USA" & d$Branche == "Ind" & d$Geschl=="M", -(1+runif(n))*d$Alter+100,d$Lohn)
+#d$Lohn <- ifelse(d$Land == "USA" & d$Branche == "Sta" & d$Geschl=="M",(1.5+runif(n))*d$Alter-10,d$Lohn)
+d$Lohn <- ifelse(d$Land == "USA" & d$Branche == "Sta" & d$Geschl=="M",(0.5+runif(n))*d$Alter,d$Lohn)
+##### USA-Frauen
+d$Alter <- ifelse(d$Land == "USA" & d$Geschl == "F",25+40*rbeta(n,5,5),d$Alter)
+d$Lohn <- ifelse(d$Land == "USA" & d$Branche == "Fin" & d$Geschl=="F",(1+runif(n))*d$Alter,d$Lohn)
+d$Lohn <- ifelse(d$Land == "USA" & d$Branche == "Ind" & d$Geschl=="F",(1.2+runif(n))*d$Alter,d$Lohn)
+d$Lohn <- ifelse(d$Land == "USA" & d$Branche == "Sta" & d$Geschl=="F",(1.5+runif(n))*d$Alter,d$Lohn)
+
+######### Daten f?r GB ###################
+d$Geschl <- ifelse(d$Land == "GB",sample(c("M","F"), n, replace = TRUE, prob = c(0.5,0.5)),d$Geschl)
+d$Branche <- ifelse(d$Land == "GB", sample(c("Fin","Ind","Sta"), n, replace = TRUE, prob = c(0.35,0.35,0.3)),d$Branche)
+d$Alter <- ifelse(d$Land == "GB",20+20*rbeta(n,5,5),d$Alter)
+##### GB-M?nner
+d$Lohn <- ifelse(d$Land == "GB" & d$Branche == "Fin" & d$Geschl=="M",(1+runif(n))*d$Alter,d$Lohn)
+d$Lohn <- ifelse(d$Land == "GB" & d$Branche == "Ind" & d$Geschl=="M", -(1+runif(n))*d$Alter+100,d$Lohn)
+#d$Lohn <- ifelse(d$Land == "GB" & d$Branche == "Sta" & d$Geschl=="M",(1.5+runif(n))*d$Alter-10,d$Lohn)
+d$Lohn <- ifelse(d$Land == "GB" & d$Branche == "Sta" & d$Geschl=="M",(0.5+runif(n))*d$Alter,d$Lohn)
+##### GB-Frauen
+d$Lohn <- ifelse(d$Land == "GB" & d$Branche == "Fin" & d$Geschl=="F",(1+runif(n))*d$Alter,d$Lohn)
+d$Lohn <- ifelse(d$Land == "GB" & d$Branche == "Ind" & d$Geschl=="F",(1.2+runif(n))*d$Alter,d$Lohn)
+d$Lohn <- ifelse(d$Land == "GB" & d$Branche == "Sta" & d$Geschl=="F",(1.5+runif(n))*d$Alter,d$Lohn)
+```
+\
+```{r fig.cap="4.1 Verteilung", fig.align="center"}
+qplot(Alter, Lohn, data=d, shape=Geschl, color=Geschl,
+   facets=Land~Branche, size=I(1),
+   main="Lohn nach Alter pro Land und Branche mit Geschlechteraufteilung",
+   xlab="Alter", ylab="Lohn")
+```
+```{r fig.cap="4.2 Density", fig.align="center"}
+qplot(Lohn, data=d, geom="density", fill=Land, alpha=I(.5),
+   main="Verteilung des Lohns", xlab="Lohn in CHF",
+   ylab="Dichte")
 ```
 
-# Anhang
-## RMarkdown code
-```{r comment=''}
-cat(readLines('Conclusions.Rmd'), sep = '\n')
+## Tests
+
+### T-Test / Anova
+```{r}
+CHAndGBSalaries<-subset(d, d$Land=="GB" | d$Land=="CH")
+myData<-data.frame(CHAndGBSalaries$Land, CHAndGBSalaries$Lohn)
+myData<-droplevels(myData) # loescht den dritten Level da R den Level "USA" preserved. Fuer den T-Test ist dies nicht zwingend erforderlich
+t.test(CHAndGBSalaries$Lohn ~ CHAndGBSalaries$Land, data=CHAndGBSalaries, var.equal=TRUE)
 ```
-## Shiny app code
-```{r comment=''}
-cat(readLines('D:/Projects/HWZ/app.R'), sep = '\n')
+
+Der p-value ist im Promillebereich. Somit ist das Resultat signifikant, was in diesem Falle bedeutet, dass sich die Loehne klar nach Land unterscheiden.
+\
+Ein Anova-Test mit nur zwei Faktoren entspricht dem T-Test. Man kann dies an den identischen p-values erkennen
+```{r}
+fit<-aov(Lohn ~ Land, data=CHAndGBSalaries)
+summary(fit)
 ```
+Werden nun noch die US Daten mitrein gemischelt, ist das Resultat nicht mehr signifikant da die US und CH Loehne recht aehnlich sind.
+```{r}
+fit<-aov(Lohn ~ Land, data=myData)
+summary(fit)
+```
+
+### Chisq-Test
+Der XQuadrat Test wird oft verwendet, wenn n unabhaengige Beobachtungen in m verschiedene Kategorien fallen. z.B. Verkehrsunfaelle pro Wochentag gemessen ueber ein Jahr.
+```{r}
+verkehrsunfaelleProWochentag<-c(80,99,78,89,82,79,53)
+chisq.test(verkehrsunfaelleProWochentag)
+```
+Da der p-value relativ klein ist, kann die Nullhypothese (Die Haeufigkeit der Verkehrsunfaelle pro Wochentag unterscheidet sich NICHT) verworfen werden, es gibt also Unterschiede zwischen den Wochentagen
+
+### Prop-Test
+Der Probability Test kann gut bei Umfragen/Experimenten verwendet werden. Man laesst z.B. 200 Personen Bier mit und ohne Alkohol trinken und erfasst wie oft sie richtig getippt haben. In diesem Beispiel wird angenommen, dass 145 Personen richtig lagen.
+```{r}
+prop.test(x=145,n=200,p=0.5,alt="greater")
+```
+Das Resultat zeigt, dass sich alkoholfreies und alkoholhaltiges Bier im Geschmack unterscheiden (alternativ Hypothese).
+
+### Wilcox-Test
+Der Mann-Whitney-Wilcoxon Test wird angewendet wenn zwei unabhaengige Gruppen von Beobachtungen vorliegen. Die Nullhypothese ist, dass es in den Daten von mtcars zwischen Autos mit automatischem (am = automatic) und geschaltetem Getriebe keinen Unterschied im Verbrauch (mpg = miles per gallon) gibt.
+```{r}
+wilcox.test(mpg ~ am, data=mtcars)
+```
+```{r fig.cap="4.3 Verteilung der mpg", fig.align="center"}
+qplot(mpg, data=mtcars, geom="density", fill=as.factor(am), alpha=I(.5),
+   xlab="Meilen pro Gallone",
+   ylab="Dichte")
+
+fit <- aov(mpg ~ cyl, data=mtcars)
+summary(fit)
+
+```
+In Fig 4.3 kann man gut sehen, dass Autos mit Handschaltung (1) tendenziell weiter kommen mit einer Gallone Treibstoff.
+
+# Tag 5
+<!-- # Anhang -->
+<!-- ## RMarkdown code -->
+<!-- ```{r comment=''} -->
+<!-- cat(readLines('Conclusions.Rmd'), sep = '\n') -->
+<!-- ``` -->
+<!-- ## Shiny app code -->
+<!-- ```{r comment=''} -->
+<!-- cat(readLines('D:/Projects/HWZ/app.R'), sep = '\n') -->
+<!-- ``` -->
