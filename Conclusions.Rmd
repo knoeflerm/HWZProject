@@ -11,8 +11,12 @@ params:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(rgl)
 library(ggplot2)
+library("car")
+knit_hooks$set(webgl = hook_webgl)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Tag 1
@@ -364,6 +368,26 @@ summary(fit)
 In Fig 4.3 kann man gut sehen, dass Autos mit Handschaltung (1) tendenziell weiter kommen mit einer Gallone Treibstoff.
 
 # Tag 5
+## Regressionsmodelle
+Die **Korrelation** von -0.852 zwischen 'Miles per Gallon' und 'Cylinder' ist nicht gerade gross, fuer dieses Beispiel jedoch ausreichend.
+```{r}
+carsData<-mtcars
+cor.test(carsData$cyl, carsData$mpg)
+```
+Je naeher der **Adjusted R-Squared** Wert bei Eins ist, desto besser die Guete des Modells. In Fig. 5.1 ist der schlechte R-Squared Wert und auch die nicht gerade berauschende Korrelation zu sehen, man kann jedoch trotzdem erkennen, dass Autos mit vielen Zylindern weniger weit kommen mit einer Gallone Benzin.
+\
+Das **Regressionsmodell** lautet somit: mpg = 37.88 - 2.88 * cyl
+```{r fig.cap="5.1 Lineare Regression Verbrauch und Anzahl Zylinder", fig.align="center"}
+fit<-lm(carsData$mpg ~ carsData$cyl)
+summary(fit)
+plot(carsData$cyl, carsData$mpg)
+abline(fit,col="red")
+```
+Hat man mehr als zwei Praediktoren, laesst sich die Regressionsgerade nicht mehr 2-dimensional darstellen. Dies laesst sich jedoch in einem 3D Diagramm darstellen (mpg = Miles per Gallon, wt = Weight, disp = Displacement).
+```{r testgl, webgl=TRUE}
+plot3d(x = carsData$wt, y = carsData$disp, z = carsData$mpg, col=rainbow(1000))
+```
+
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
 <!-- ```{r comment=''} -->
