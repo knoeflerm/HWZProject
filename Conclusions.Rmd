@@ -369,12 +369,16 @@ In Fig 4.3 kann man gut sehen, dass Autos mit Handschaltung (1) tendenziell weit
 
 # Tag 5
 ## Regressionsmodelle
+### Korrelation
 Die **Korrelation** von -0.852 zwischen 'Miles per Gallon' und 'Cylinder' ist nicht gerade gross, fuer dieses Beispiel jedoch ausreichend.
+\ Die daten sind [hier](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html) beschrieben.
 ```{r}
 carsData<-mtcars
 cor.test(carsData$cyl, carsData$mpg)
 ```
-Je naeher der **Adjusted R-Squared** Wert bei Eins ist, desto besser die Guete des Modells. In Fig. 5.1 ist der schlechte R-Squared Wert und auch die nicht gerade berauschende Korrelation zu sehen, man kann jedoch trotzdem erkennen, dass Autos mit vielen Zylindern weniger weit kommen mit einer Gallone Benzin.
+
+### Lineare Regression
+Je naeher der **Adjusted R-Squared** Wert bei Eins ist, desto besser die Guete des Modells. Die Sternchen * geben an wie signifikant das Resultat ist, der Pr(>|t|) Wert ist somit der p-Value. In Fig. 5.1 ist der schlechte R-Squared Wert und auch die nicht gerade berauschende Korrelation zu sehen, man kann jedoch trotzdem erkennen, dass Autos mit vielen Zylindern weniger weit kommen mit einer Gallone Benzin.
 \
 Das **Regressionsmodell** lautet somit: mpg = 37.88 - 2.88 * cyl
 ```{r fig.cap="5.1 Lineare Regression Verbrauch und Anzahl Zylinder", fig.align="center"}
@@ -383,11 +387,39 @@ summary(fit)
 plot(carsData$cyl, carsData$mpg)
 abline(fit,col="red")
 ```
-Hat man mehr als zwei Praediktoren, laesst sich die Regressionsgerade nicht mehr 2-dimensional darstellen. Dies laesst sich jedoch in einem 3D Diagramm darstellen (mpg = Miles per Gallon, wt = Weight, disp = Displacement).
+
+### Regression mit mehr als zwei Praediktoren
+Hat man mehr als zwei Praediktoren, laesst sich die Regressionsgerade nicht mehr 2-dimensional darstellen. Dies laesst sich jedoch in einem 3D Diagramm darstellen (mpg = Miles per Gallon, wt = Weight, disp = Displacement). Dreht man an der 3D-Grafik etwas herum, kann man das Regressionsmodell mpg = 39.67 - 3.19 * wt - 1.51 * cyl erkennen.
 ```{r testgl, webgl=TRUE}
-plot3d(x = carsData$wt, y = carsData$disp, z = carsData$mpg, col=rainbow(1000))
+fit<-lm(carsData$mpg ~ carsData$wt + carsData$cyl)
+summary(fit)
+plot3d(x = carsData$wt, y = carsData$cyl, z = carsData$mpg, col=rainbow(1000))
 ```
 
+### Standardisierte Regressionskoeffizienten
+Mit dem Befehl **scale()** koennen Merkmale standardisiert werden. Das heisst es werden alle Einheiten der Masse entfernt. Der Koeffizient gibt aber nur noch die relative Beziehung zu den Verteilungen der Merkmale an.
+```{r}
+fit<-lm(mpg ~ cyl + wt + disp, data = carsData)
+summary(fit)
+fit<-lm(scale(mpg) ~ scale(cyl) + scale(wt) + scale(disp), data = carsData)
+summary(fit)
+```
+
+### Prediction
+Original Daten
+```{r}
+carsData
+```
+Vorhersagen
+```{r}
+fit<-lm(mpg ~ cyl + wt + disp, data = carsData)
+predict(fit, carsData)
+```
+
+## Korrelations-Analyse
+```{r}
+cor(carsData[, c("mpg", "cyl", "disp", "wt")])
+```
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
 <!-- ```{r comment=''} -->
