@@ -14,7 +14,10 @@ params:
 library(knitr)
 library(rgl)
 library(ggplot2)
-library("car")
+library(car)
+library(Hmisc)
+library(psych)
+
 knit_hooks$set(webgl = hook_webgl)
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -368,7 +371,7 @@ summary(fit)
 In Fig 4.3 kann man gut sehen, dass Autos mit Handschaltung (1) tendenziell weiter kommen mit einer Gallone Treibstoff.
 
 # Tag 5
-## Regressionsmodelle
+## Regression
 ### Korrelation
 Die **Korrelation** von -0.852 zwischen 'Miles per Gallon' und 'Cylinder' ist nicht gerade gross, fuer dieses Beispiel jedoch ausreichend.
 \ Die daten sind [hier](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html) beschrieben.
@@ -416,9 +419,29 @@ fit<-lm(mpg ~ cyl + wt + disp, data = carsData)
 predict(fit, carsData)
 ```
 
-## Korrelations-Analyse
-```{r}
+### Korrelations-Analyse
+Mit einer Korrelationsanalyse kann man sich erst mal einen Ueberblick verschaffen wie gut oder schlecht die Daten miteinander korrelieren. Je naeher die Werte bei eins, desto besser korrelieren sie. In Fig. 5.2 ist eigentlich links unten und gegen rechts oben zweimal die gleiche Information enthalten, einfach mit vertauschten Achsen.
+```{r fig.cap="5.2 Simple Korrelationsmatrix", fig.align="center"}
 cor(carsData[, c("mpg", "cyl", "disp", "wt")])
+pairs(~ mpg + cyl + wt + disp, data = carsData)
+```
+Fig. 5.3 zeigt einen Korrelations Scatter Plot mit etwas mehr Informationsgehalt. Korrelationskoeffizienten, Histogramme mit Density und die Scatterplots die auch in Fig. 5.2 dargestellt sind. Fuer rcorr kann man auch den type="pearson" verwenden was unterschiedliche Korrelationswerte ergibt, die ich aber an dieser Stelle nicht erklaeren kann.
+```{r fig.cap="5.3 Graphische Korrelationsmatrix", fig.align="center"}
+carsDataReduced<-data.frame(carsData$mpg, carsData$cyl, carsData$wt, carsData$disp)
+carsDataMatrix<-data.matrix(carsDataReduced)
+rcorr(carsDataMatrix, type = "pearson")
+pairs.panels(carsDataReduced, main="Simple Scatterplot Matrix")
+```
+
+### Variablen Selektion
+Das Ziel der Variablenselektion ist es, aus einer großen Auswahl von potentiell erklärenden
+Variablen in einem Datensatz diejenigen herauszufinden, mit denen ein Regressionsmodell
+die Vorhersage der Zielvariablen am Besten beschreibt. Die Variablenauswahl erfolgt zum einen aus inhaltlichen Gesichtspunkten und zum anderen mit Hilfe unterschiedlicher statistischer Verfahren. Bekannte Selektionsmethoden sind beispielsweise die Backward-, Forward- oder Stepwise-Verfahren
+\
+Mit der Funktion **step()** kann in R eine Variablenselektion durchgefuehrt werden. Je kleiner der AIC-Wert, desto mehr Erklaerungsgehalt besitzt das Modell.
+```{r}
+cars.regression<-lm(carsData$mpg ~ carsData$wt + carsData$cyl + carsData$disp)
+cars.step <- step(cars.regression,direction="backward")
 ```
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
