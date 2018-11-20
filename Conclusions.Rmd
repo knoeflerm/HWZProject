@@ -181,6 +181,8 @@ head(dataMatrix, minObservations)
 ```
 
 # Tag 3
+
+## Histogramme und Plots
 Einige Plots und Histogramme auf dem originalen Dataframe. Da saemtliche Daten im Dataframe zufaellig erzeugt wurden, sehen die Grafiken und Kurven natuerlich auch willkuerlich und etwas chaotisch aus.
 
 ```{r ,echo=TRUE, fig.cap="Fig. 3.1 Histogramm mit Dichte (Normalverteilung)", fig.align="center"}
@@ -200,11 +202,13 @@ plot(df$income, main="Scatterplot")
 hist(df$income, main="Histogramm")
 ```
 
+## Boxplot
 ```{r ,echo=TRUE, fig.cap="Fig. 3.5 Boxplot nach Income", fig.align="center"}
 boxplot(df$income, main="Boxplot")
 ```
 Ein Boxplot beinhaltet fuenf Informationen. Der dicke Strich im Kasten ist der Median, der obere und untere Rand des Kastens zeigen die Quantile Q1 (25% der Werte sind kleiner als dieser Wert) und Q3 (25% der Werte sind groesser als dieser Wert) an, der unterste Strich ist das Minimum und der oberste Strich das Maximum
 
+## Plot einer generierten Matrix
 An sich ein simpler Plot der jedoch schoen anzuschauen ist und vorallem die Daten aus einem clever kombinierten Dataframe bezieht. Eine an dieser Stelle zentrale Funktion ist **rbind()** welche jeweils die Zeilen eines Dataframes in einen neuen (oder wieder den urspruenglichen) merged. Dieses Beispiel stammt von <http://rstudio-pubs-static.s3.amazonaws.com/18905_c8e7a77909704e90a4a38cd3e8bc30f9.html>
 
 ```{r}
@@ -476,6 +480,8 @@ step(fitCars)
 Reg4<- update(fitCars, ~ + wt:cyl.f)
 summary(Reg4)
 ```
+
+# Tag 6
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
 <!-- ```{r comment=''} -->
