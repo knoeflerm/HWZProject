@@ -67,6 +67,8 @@ knitr::opts_chunk$set(echo = TRUE)
 <https://en.wikipedia.org/wiki/Data_mining>
 
 # Tag 2
+
+## Daten einlesen
 Es gibt verschiedene Moeglichkeiten Daten zu lesen. Der Readbefehl haengt vom Dateityp der Quelle ab. Die bis anhing fuer uns wichtigsten sind:
 
 * read.table("FullPath/FileName.txt")
@@ -80,6 +82,7 @@ Es gibt verschiedene Moeglichkeiten Daten zu lesen. Der Readbefehl haengt vom Da
 load("C:/Users/mknoefler/OneDrive/Documents/BigData/R/Umfrage.rda")
 ```
 
+## Uebersicht der Daten
 Es ist ratsam sich anfangs jeweils einen groben Ueberblick ueber die geladenen Daten zu verschaffen. Dazu sind die Befehle **dim**, **summary**, **str** und **head** sehr hilfreich.\newline Alle Befehle in R sind online dokumentiert und koennen mit dem Fragezeichen (z.B. ?head) aufgerufen werden.
 ```{r}
 dim(Umfrage) # gibt Auskunft ueber die Dimension der Daten
@@ -88,6 +91,9 @@ str(Umfrage) # zeigt die Eigenschaften (Variablen, Columns, ...) an
 head(Umfrage,5) # zeigt die ersten 10 Datensaetze an
 ```
 
+## Dataframe
+
+### Zufallswerte
 Im folgenden wird ein Data Frame mit verschiedenen, rein zufaelligen Werten erzeugt. Entweder wird ein Observations count via **Shiny App** als Parameter ins **RMarkdown** gegeben, ansonsten wird ein Defaultwert genommen.
 ```{r}
 minObservations<-10
@@ -117,11 +123,13 @@ head(df)
 # df
 ```
 
+### Duplikate
 Es waere sehr verwunderlich, wenn es in diesem Dataframe zwei genau gleiche Datensaetze haette.
 ```{r}
 any(duplicated(df))
 ```
 
+### Berechnungen und Veraenderungen im Dataframe
 Berechnen des Durchschnittalters pro Geschlecht:
 ```{r}
 tapply(df$age, df$sex, mean, na.rm=T)
@@ -139,6 +147,7 @@ part.female<- split(sampleDf, sampleDf$sex)
 part.female
 ```
 
+### Subset
 Datensaetze mit gewissen Kriterien kann man auf verschiedene Arten auslesen, z.B. mit **which**, oder mit dem Befehl **subset**.
 ```{r}
 sampleDf[which(sampleDf$income>=140000),]
@@ -146,15 +155,17 @@ subset(sampleDf, sampleDf$income>=140000)
 table(sampleDf$sex, sampleDf$education)
 ```
 
+### Haeufigkeitstabelle
 Eine Haeufigkeitstabelle die aussagt, wieviele Frauen oder Maenner dieselbe Ausbildungsstufe haben. Dies kann mit den Befehlen **table** und **xtabs** bewerkstelligt werden.
 ```{r}
 table(sampleDf$sex,sampleDf$education)
 xtabs(~sex + education, data=sampleDf)
 ```
 
+### Matrix
 Der Data Frame wird in eine Matrix konvertiert und mit anderen Spalten- und Zeilennamen versehen. Man beachte den Unterschied der Matrix wenn sie mit dem Befehl as.matrix(), oder data.matrix() konvertiert wurde.
 ```{r}
-columnNames<-c("ID","Geschl.","Alter","Groesse","Einkommen","Ausbildung", "Geschl.f")
+columnNames<-c("ID", "Geschl.", "Alter", "Groesse", "Einkommen", "Ausbildung", "Geschl.f")
 rowNames<-NULL
 for (id in sampleDf$ids) {
  rowNames <- c(rowNames, paste('Obs.', id, collapse = "," ))
@@ -374,7 +385,7 @@ In Fig 4.3 kann man gut sehen, dass Autos mit Handschaltung (1) tendenziell weit
 ## Regression
 ### Korrelation
 Die **Korrelation** von -0.852 zwischen 'Miles per Gallon' und 'Cylinder' ist nicht gerade gross, fuer dieses Beispiel jedoch ausreichend.
-\ Die daten sind [hier](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html) beschrieben.
+\ Das Package 'mtcars' ist [hier](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html) beschrieben.
 ```{r}
 carsData<-mtcars
 cor.test(carsData$cyl, carsData$mpg)
@@ -409,14 +420,18 @@ summary(fit)
 ```
 
 ### Prediction
-Original Daten
+
+#### Original Daten
 ```{r}
 carsData
 ```
-Vorhersagen
+
+#### Vorhersagen
+Der Verbrauch des Mazda RX4 sinkt bei gleichem Gewicht, jedoch der Hubraum (disp) auf nur vier, anstatt 6 Zylinder verteilt.
 ```{r}
-fit<-lm(mpg ~ cyl + wt + disp, data = carsData)
-predict(fit, carsData)
+fitCars<-lm(mpg ~ cyl + wt + disp, data = carsData)
+predsCars <- data.frame(cyl=4, wt=2.62, disp=160)
+predict(fitCars, newdata=predsCars, interval="prediction")
 ```
 
 ### Korrelations-Analyse
@@ -442,6 +457,24 @@ Mit der Funktion **step()** kann in R eine Variablenselektion durchgefuehrt werd
 ```{r}
 cars.regression<-lm(carsData$mpg ~ carsData$wt + carsData$cyl + carsData$disp)
 cars.step <- step(cars.regression,direction="backward")
+```
+
+### Factors as Predictors
+R erkennt Faktoren und macht daraus automatisch Predictors (dummy Variablen). Dies ist hier mit cyl.f simuliert. Der Befehl **table** gibt den count pro Zylindertype aus, was man auch rechts unten im summary sehen kann.
+```{r}
+carsData$cyl.f<-as.factor(carsData$cyl)
+levels(carsData$cyl.f)<-c("small", "medium", "big")
+table(carsData$cyl) # Display count of each Cylinder type
+summary(carsData)
+```
+
+#### Interaktion von Merkmalen
+Am p-value kann man sehen, dass das Gewicht gekoppelt mit der Anzahl Zylinder fuer die sechs und acht Zylinder signifikanter ist.
+```{r}
+fitCars<-lm(mpg ~ cyl + wt + disp, data = carsData)
+step(fitCars)
+Reg4<- update(fitCars, ~ + wt:cyl.f)
+summary(Reg4)
 ```
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
