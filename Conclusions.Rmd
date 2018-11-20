@@ -22,7 +22,7 @@ knit_hooks$set(webgl = hook_webgl)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Tag 1
+# Tag 1 - Was ist BigData
 
 ## Daten an der Uni St.Gallen
 * Polystrukturierte Daten
@@ -66,7 +66,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <https://en.wikipedia.org/wiki/Data_mining>
 
-# Tag 2
+# Tag 2 - Technologien
 
 ## Daten einlesen
 Es gibt verschiedene Moeglichkeiten Daten zu lesen. Der Readbefehl haengt vom Dateityp der Quelle ab. Die bis anhing fuer uns wichtigsten sind:
@@ -180,7 +180,7 @@ dataMatrix<-subset(dataMatrix, select=-ID)
 head(dataMatrix, minObservations)
 ```
 
-# Tag 3
+# Tag 3 - Dateninspektion und Visualisierung
 
 ## Histogramme und Plots
 Einige Plots und Histogramme auf dem originalen Dataframe. Da saemtliche Daten im Dataframe zufaellig erzeugt wurden, sehen die Grafiken und Kurven natuerlich auch willkuerlich und etwas chaotisch aus.
@@ -237,10 +237,10 @@ for (i in 1:iter) {
 plot(x = dfFeather[, 2], y = dfFeather[, 1], plt = c(0, 10, -5, 5), cex = 0.1, asp = 1)
 ```
 
-# Tag 4
+# Tag 4 - Hypothesen
 Im weiteren werden nicht mehr alle R Code Snippets im Report ersichtlich sein (echo=FALSE). Das vollstaendige Markdown mit R-Code ist im Anhang ersichtlich.
 
-## Hypothesen
+\
 Hypothesen dienen der **Management Beratung**, oder sie kommen sogar aus dem Management.
 
 * Am Anfang steht die **Diagnose**. Das Fachthema muss verstanden, das Problem genau identifiziert und es muss klar sein welche Daten benoetigt werden.
@@ -385,7 +385,7 @@ summary(fit)
 ```
 In Fig 4.3 kann man gut sehen, dass Autos mit Handschaltung (1) tendenziell weiter kommen mit einer Gallone Treibstoff.
 
-# Tag 5
+# Tag 5 - Prognosen mittels Regressionsanalyse
 ## Regression
 ### Korrelation
 Die **Korrelation** von -0.852 zwischen 'Miles per Gallon' und 'Cylinder' ist nicht gerade gross, fuer dieses Beispiel jedoch ausreichend.
@@ -423,7 +423,7 @@ fit<-lm(scale(mpg) ~ scale(cyl) + scale(wt) + scale(disp), data = carsData)
 summary(fit)
 ```
 
-### Prediction
+## Prediction
 
 #### Original Daten
 ```{r}
@@ -472,7 +472,7 @@ table(carsData$cyl) # Display count of each Cylinder type
 summary(carsData)
 ```
 
-#### Interaktion von Merkmalen
+### Interaktion von Merkmalen
 Am p-value kann man sehen, dass das Gewicht gekoppelt mit der Anzahl Zylinder fuer die sechs und acht Zylinder signifikanter ist.
 ```{r}
 fitCars<-lm(mpg ~ cyl + wt + disp, data = carsData)
@@ -481,7 +481,27 @@ Reg4<- update(fitCars, ~ + wt:cyl.f)
 summary(Reg4)
 ```
 
-# Tag 6
+# Tag 6 - Textmining
+
+## Text bereinigung
+
+### Stemming
+
+### Stopwords
+
+## Wordclouds
+
+### Simple
+
+### Bigram
+
+### Comparison Cloud
+
+### Words in Common
+
+### Dendogram
+
+## AI as a Service
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
 <!-- ```{r comment=''} -->
