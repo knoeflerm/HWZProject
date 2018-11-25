@@ -11,6 +11,8 @@ params:
 ---
 
 ```{r setup, include=FALSE}
+Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jdk-11.0.1') #used for RWeka package
+
 library(knitr)
 library(rgl)
 library(ggplot2)
@@ -23,10 +25,12 @@ library(proxy)
 library(wordcloud)
 library(SnowballC)
 library(RColorBrewer)
+library(RWeka)
 
 knit_hooks$set(webgl = hook_webgl)
 knitr::opts_chunk$set(echo = TRUE)
 options(warn = -1)
+
 ```
 
 # Tag 1 - Was ist BigData
@@ -526,7 +530,7 @@ docs3 <- tm_map(docs2, function(x) stri_replace_all_fixed(x, "\t", " "))
 docs4 <- tm_map(docs3, PlainTextDocument)
 docs5 <- tm_map(docs4, stripWhitespace)
 docs6 <- tm_map(docs5, removePunctuation)
-docs7 <- tm_map(docs6, tolower)
+docsToPlot <- tm_map(docs6, tolower)
 
 plotWordFrequency<-function(document, title){
   dtm <- TermDocumentMatrix(document)
@@ -535,24 +539,45 @@ plotWordFrequency<-function(document, title){
   d <- data.frame(word = names(v),freq=v)
   
   barplot(d[1:10,]$freq, las = 2, names.arg = d[1:10,]$word,
-          col ="lightblue", main = title,
-          ylab = "Word frequencies")
+        col ="lightblue", main = title,
+        ylab = "Word frequencies")
+
+  return(d)
 }
-plotWordFrequency(docs7, "Most frequent words total")
+
+plotWordFrequency(docsToPlot, "Most frequent words total")
 ```
 ```{r echo=FALSE, fig.cap="6.2 Words Frequency ohne Stopwords", fig.align="center"}
-docs7 <- tm_map(docs7, removeWords, c(stopwords("english"),"160","wikipedia", "gallen", "edit", "dated",
+docsToPlot <- tm_map(docsToPlot, removeWords, c(stopwords("english"),"160","wikipedia", "gallen", "edit", "dated",
                                       "articles", "st160gallen", "swiss", "containing", "2009", "one", "accessed"))
 
-plotWordFrequency(docs7, "Most frequent words removed Stopwords")
+d<-plotWordFrequency(docsToPlot, "Most frequent words removed Stopwords")
 
 ```
 
 ## Wordclouds
-
 ### Simple
+```{r echo=FALSE, fig.cap="6.3 Wordcloud", fig.align="center"}
+set.seed(1234)
+wordcloud(words = d$word, freq = d$freq, min.freq = 1,
+          max.words=50, random.order=FALSE, rot.per=0.35, 
+          colors=brewer.pal(8, "Dark2"), scale = c(6, 0.2))
+```
 
 ### Bigram
+```{r}
+#falls ich das nicht machen moechte, RWeka package und sys.setenv entfernen
+BigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 2))
+tdm.bigram <- TermDocumentMatrix(clean_corp, control = list(tokenize = BigramTokenizer))
+freq <- sort(rowSums(as.matrix(tdm.bigram)), decreasing = TRUE)
+freq.df <- data.frame(word = names(freq), freq= freq)
+
+wordcloud(freq.df$word, freq.df$freq, 
+          max.words = 50, 
+          random.order = F, 
+          colors = purple_orange, 
+          scale = c(4,0.7))
+```
 
 ### Comparison Cloud
 
