@@ -17,9 +17,16 @@ library(ggplot2)
 library(car)
 library(Hmisc)
 library(psych)
+library(tm)
+library(stringi)
+library(proxy)
+library(wordcloud)
+library(SnowballC)
+library(RColorBrewer)
 
 knit_hooks$set(webgl = hook_webgl)
 knitr::opts_chunk$set(echo = TRUE)
+options(warn = -1)
 ```
 
 # Tag 1 - Was ist BigData
@@ -482,12 +489,64 @@ summary(Reg4)
 ```
 
 # Tag 6 - Textmining
+Text Mining, seltener auch Textmining, Text Data Mining oder Textual Data Mining, ist ein Bündel von Algorithmus-basierten Analyseverfahren zur Entdeckung von Bedeutungsstrukturen aus un- oder schwachstrukturierten Textdaten. Mit statistischen und linguistischen Mitteln erschließt Text-Mining-Software aus Texten Strukturen, die die Benutzer in die Lage versetzen sollen, Kerninformationen der verarbeiteten Texte schnell zu erkennen. Im Optimalfall liefern Text-Mining-Systeme Informationen, von denen die Benutzer zuvor nicht wissen, ob und dass sie in den verarbeiteten Texten enthalten sind. Bei zielgerichteter Anwendung sind Werkzeuge des Text Mining außerdem in der Lage, Hypothesen zu generieren, diese zu überprüfen und schrittweise zu verfeinern.
+\
+(Quelle: [Wikipedia](https://de.wikipedia.org/wiki/Text_Mining))
 
 ## Text bereinigung
+Zuerst muessen die Texte bereinigt werden. Alle "nichtssagenden" Woerter (Stopwords) raus wie auch andere unbenoetigte Zeichen (#, @, ., ?, ...). Auch werden die Woerter ge-clustert und ihrem Wortstamm zugeordnet (Stemming).
 
 ### Stemming
+Als Stemming (Stammformreduktion, Normalformenreduktion) bezeichnet man im Information Retrieval sowie in der linguistischen Informatik ein Verfahren, mit dem verschiedene morphologische Varianten eines Wortes auf ihren gemeinsamen Wortstamm zurückgeführt werden, z. B. die Deklination von Wortes oder Wörter zu Wort und Konjugation von gesehen oder sah zu seh.
+\
+(Quelle: [Wikipedia](https://de.wikipedia.org/wiki/Stemming))
 
 ### Stopwords
+Stopwoerter sind Woerter die sehr haeufig vorkommen und nichts zur Informationsrueckgewinnung beitragen. Sie koennen oft weggelassen werden. Es gibt fixe Listen mit Stopwoertern die man verwenden kann. Eine solche Liste pro Sprache existiert auch in R.
+\
+(Weitere Informationen: [Wikipedia](https://de.wikipedia.org/wiki/Stoppwort))
+\
+
+Aus Fig. 6.1 kann man noch nicht viel Information lesen, nach der Bereinigung jedoch wesentlich besser (Fig. 6.2).
+```{r echo=FALSE, fig.cap="6.1 Words Frequency mit Stopwords", fig.align="center"}
+wiki <- "http://en.wikipedia.org/wiki/"
+titles <- c("St._Gallen")
+
+articles <- character(length(titles))
+
+for (i in 1:length(titles)) {
+  articles[i] <- stri_flatten(readLines(stri_paste(wiki, titles[i])), col = " ")
+}
+
+docs <- Corpus(VectorSource(articles))
+
+docs2 <- tm_map(docs, function(x) stri_replace_all_regex(x, "<.+?>", " "))
+docs3 <- tm_map(docs2, function(x) stri_replace_all_fixed(x, "\t", " "))
+
+docs4 <- tm_map(docs3, PlainTextDocument)
+docs5 <- tm_map(docs4, stripWhitespace)
+docs6 <- tm_map(docs5, removePunctuation)
+docs7 <- tm_map(docs6, tolower)
+
+plotWordFrequency<-function(document, title){
+  dtm <- TermDocumentMatrix(document)
+  m <- as.matrix(dtm)
+  v <- sort(rowSums(m),decreasing=TRUE)
+  d <- data.frame(word = names(v),freq=v)
+  
+  barplot(d[1:10,]$freq, las = 2, names.arg = d[1:10,]$word,
+          col ="lightblue", main = title,
+          ylab = "Word frequencies")
+}
+plotWordFrequency(docs7, "Most frequent words total")
+```
+```{r echo=FALSE, fig.cap="6.2 Words Frequency ohne Stopwords", fig.align="center"}
+docs7 <- tm_map(docs7, removeWords, c(stopwords("english"),"160","wikipedia", "gallen", "edit", "dated",
+                                      "articles", "st160gallen", "swiss", "containing", "2009", "one", "accessed"))
+
+plotWordFrequency(docs7, "Most frequent words removed Stopwords")
+
+```
 
 ## Wordclouds
 
