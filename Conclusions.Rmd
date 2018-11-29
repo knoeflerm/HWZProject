@@ -518,19 +518,27 @@ titles <- c("St._Gallen")
 
 articles <- character(length(titles))
 
+#not need for a for loop in this example
 for (i in 1:length(titles)) {
   articles[i] <- stri_flatten(readLines(stri_paste(wiki, titles[i])), col = " ")
 }
 
-docs <- Corpus(VectorSource(articles))
+cleanCorpus<-function(articlesFunc){
+  docs <- Corpus(VectorSource(articles))
+  
+  docs2 <- tm_map(docs, function(x) stri_replace_all_regex(x, "<.+?>", " "))
+  docs3 <- tm_map(docs2, function(x) stri_replace_all_fixed(x, "\t", " "))
+  
+  docs4 <- tm_map(docs3, PlainTextDocument)
+  docs5 <- tm_map(docs4, stripWhitespace)
+  docs6 <- tm_map(docs5, removePunctuation)
+  docs <- tm_map(docs6, tolower)
+  
+  return(docs)
+}
 
-docs2 <- tm_map(docs, function(x) stri_replace_all_regex(x, "<.+?>", " "))
-docs3 <- tm_map(docs2, function(x) stri_replace_all_fixed(x, "\t", " "))
-
-docs4 <- tm_map(docs3, PlainTextDocument)
-docs5 <- tm_map(docs4, stripWhitespace)
-docs6 <- tm_map(docs5, removePunctuation)
-docsToPlot <- tm_map(docs6, tolower)
+sgArticles<-articles
+sgDocsToPlot<-cleanCorpus(sgArticles)
 
 plotWordFrequency<-function(document, title){
   dtm <- TermDocumentMatrix(document)
@@ -545,13 +553,13 @@ plotWordFrequency<-function(document, title){
   return(d)
 }
 
-plotWordFrequency(docsToPlot, "Most frequent words total")
+plotWordFrequency(sgDocsToPlot, "Most frequent words total")
 ```
 ```{r echo=FALSE, fig.cap="6.2 Words Frequency ohne Stopwords", fig.align="center"}
-docsToPlot <- tm_map(docsToPlot, removeWords, c(stopwords("english"),"160","wikipedia", "gallen", "edit", "dated",
+sgDocsToPlot <- tm_map(sgDocsToPlot, removeWords, c(stopwords("english"),"160","wikipedia", "gallen", "edit", "dated",
                                       "articles", "st160gallen", "swiss", "containing", "2009", "one", "accessed"))
 
-d<-plotWordFrequency(docsToPlot, "Most frequent words removed Stopwords")
+d<-plotWordFrequency(sgDocsToPlot, "Most frequent words removed Stopwords")
 
 ```
 
@@ -564,28 +572,62 @@ wordcloud(words = d$word, freq = d$freq, min.freq = 1,
           colors=brewer.pal(8, "Dark2"), scale = c(6, 0.2))
 ```
 
-### Bigram
-```{r}
-#falls ich das nicht machen moechte, RWeka package und sys.setenv entfernen
+### Bigram/Trigram
+Da der Mensch aus einer Reihe von Woertern einen Sinn erkennen kann, muss man das einer Maschine beibringen. Dazu kann man Woerter in Paaren nach Haeufigkeit zusammen darstellen. So kann man den Zusammenhang besser erkennen. Ein **Bigram** macht dies mit zwei Woertern, ein **Trigram** mit drei.
+
+```{r echo=FALSE, fig.cap="6.4 Bigram", fig.align="center"}
 BigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 2))
-tdm.bigram <- TermDocumentMatrix(clean_corp, control = list(tokenize = BigramTokenizer))
+tdm.bigram <- TermDocumentMatrix(sgDocsToPlot, control = list(tokenize = BigramTokenizer))
 freq <- sort(rowSums(as.matrix(tdm.bigram)), decreasing = TRUE)
 freq.df <- data.frame(word = names(freq), freq= freq)
 
 wordcloud(freq.df$word, freq.df$freq, 
           max.words = 50, 
           random.order = F, 
-          colors = purple_orange, 
+          colors = brewer.pal(8, "Dark2"), 
           scale = c(4,0.7))
 ```
 
-### Comparison Cloud
+### Commonality/Comparison Cloud
+Eine Comparison Cloud vergleicht zwei (aehnliche) Datasets. Man kann erkennen was in unserem Fall z.B. die Staedt Zuerich und St.Gallen gemeinsam haben.
+
+```{r echo=FALSE, fig.cap="6.5 Commonality Cloud", fig.align="center"}
+titles <- c("Zuerich")
+
+articles <- character(length(titles))
+
+#not need for a for loop in this example
+for (i in 1:length(titles)) {
+  articles[i] <- stri_flatten(readLines(stri_paste(wiki, titles[i])), col = " ")
+}
+zhArticles<-articles
+sgzh_docs<-c(sgArticles, zhArticles)
+sgzh_docs <- VectorSource(sgzh_docs)
+sgzh_corpus<-VCorpus(sgzh_docs)
+sgzh_clean<-cleanCorpus(sgzh_corpus)
+
+sgzh_clean <- tm_map(sgzh_clean, removeWords, c(stopwords("english"), stopwords("german"), "edit","also","160", "2010", "â\200œ", "â€œ"))
+# d<-plotWordFrequency(sgzh_clean, "Most frequent words removed Stopwords")
+
+# sgzh_clean<-gsub("â", "x", sgzh_clean)
+# sgzh_clean<-gsub("€", "x", sgzh_clean)
+# sgzh_clean<-gsub("œ", "x", sgzh_clean)
+
+sgzh_tdm <- TermDocumentMatrix(sgzh_clean) 
+sgzh_m <- as.matrix(sgzh_tdm)
+commonality.cloud(sgzh_m, max.words = 100, colors = "steelblue1", scale = c(6,0.7))
+```
+```{r echo=FALSE, fig.cap="6.6 Comparison Cloud", fig.align="center"}
+comparison.cloud(sgzh_m, max.words = 6, colors = c("orange", "blue"), scale = c(3,0.5))
+```
 
 ### Words in Common
+
 
 ### Dendogram
 
 ## AI as a Service
+
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
 <!-- ```{r comment=''} -->
