@@ -11,7 +11,6 @@ params:
 ---
 
 ```{r setup, include=FALSE}
-Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jdk-11.0.1') #used for RWeka package
 
 library(knitr)
 library(rgl)
@@ -25,7 +24,6 @@ library(proxy)
 library(wordcloud)
 library(SnowballC)
 library(RColorBrewer)
-library(RWeka)
 
 knit_hooks$set(webgl = hook_webgl)
 knitr::opts_chunk$set(echo = TRUE)
@@ -590,6 +588,7 @@ wordcloud(freq.df$word, freq.df$freq,
 
 ### Commonality/Comparison Cloud
 Eine Comparison Cloud vergleicht zwei (aehnliche) Datasets. Man kann erkennen was in unserem Fall z.B. die Staedt Zuerich und St.Gallen gemeinsam haben.
+Eine Comparison cloud zeigt die Woerter der beiden Staedt voneinander getrennt in einer Cloud.
 
 ```{r echo=FALSE, fig.cap="6.5 Commonality Cloud", fig.align="center"}
 titles <- c("Zuerich")
@@ -612,10 +611,7 @@ sgzh_tdm <- TermDocumentMatrix(sgzh_clean)
 sgzh_m <- as.matrix(sgzh_tdm)
 commonality.cloud(sgzh_m, max.words = 100, colors = "steelblue1", scale = c(6,0.7))
 ```
-# ```{r echo=FALSE, fig.cap="6.6 Comparison Cloud", fig.align="center"}
-# # could not bring that to run. There are weird characters (â€œ) in ZH Wiki which probably trigger the 'cex' error
-# comparison.cloud(sgzh_m, max.words = 6, colors = c("orange", "blue"), scale = c(3,0.5))
-# ```
+
 
 ### Words in Common
 
