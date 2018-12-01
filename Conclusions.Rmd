@@ -607,19 +607,15 @@ sgzh_corpus<-VCorpus(sgzh_docs)
 sgzh_clean<-cleanCorpus(sgzh_corpus)
 
 sgzh_clean <- tm_map(sgzh_clean, removeWords, c(stopwords("english"), stopwords("german"), "edit","also","160", "2010", "â\200œ", "â€œ"))
-# d<-plotWordFrequency(sgzh_clean, "Most frequent words removed Stopwords")
-
-# sgzh_clean<-gsub("â", "x", sgzh_clean)
-# sgzh_clean<-gsub("€", "x", sgzh_clean)
-# sgzh_clean<-gsub("œ", "x", sgzh_clean)
 
 sgzh_tdm <- TermDocumentMatrix(sgzh_clean) 
 sgzh_m <- as.matrix(sgzh_tdm)
 commonality.cloud(sgzh_m, max.words = 100, colors = "steelblue1", scale = c(6,0.7))
 ```
-```{r echo=FALSE, fig.cap="6.6 Comparison Cloud", fig.align="center"}
-comparison.cloud(sgzh_m, max.words = 6, colors = c("orange", "blue"), scale = c(3,0.5))
-```
+# ```{r echo=FALSE, fig.cap="6.6 Comparison Cloud", fig.align="center"}
+# # could not bring that to run. There are weird characters (â€œ) in ZH Wiki which probably trigger the 'cex' error
+# comparison.cloud(sgzh_m, max.words = 6, colors = c("orange", "blue"), scale = c(3,0.5))
+# ```
 
 ### Words in Common
 
