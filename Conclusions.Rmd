@@ -586,9 +586,8 @@ wordcloud(freq.df$word, freq.df$freq,
           scale = c(4,0.7))
 ```
 
-### Commonality/Comparison Cloud
+### Commonality
 Eine Comparison Cloud vergleicht zwei (aehnliche) Datasets. Man kann erkennen was in unserem Fall z.B. die Staedt Zuerich und St.Gallen gemeinsam haben.
-Eine Comparison cloud zeigt die Woerter der beiden Staedt voneinander getrennt in einer Cloud.
 
 ```{r echo=FALSE, fig.cap="6.5 Commonality Cloud", fig.align="center"}
 titles <- c("Zuerich")
@@ -612,13 +611,16 @@ sgzh_m <- as.matrix(sgzh_tdm)
 commonality.cloud(sgzh_m, max.words = 100, colors = "steelblue1", scale = c(6,0.7))
 ```
 
+### Weitere Grafiken
 
-### Words in Common
-
-
-### Dendogram
+Eine **Comparison cloud** zeigt die Woerter der beiden Staedt voneinander getrennt in einer Cloud.
+\
+[Words in Common](https://rpubs.com/williamsurles/316682) stellt die Woerter der beiden Staedt nach Haeufigkeit gegenueber.
+\
+Ein [Dendogram](https://rpubs.com/gaston/dendrograms) zeigt hirarchisch geclusterte Woerter nach Haeufigkeit in einem Tree auf.
 
 ## AI as a Service
+Natuerlich gibt es auch diverse AI Services von Kommerziellen Anbietern wie z.B.[Microsoft Azure AI + Machine Learning](https://azure.microsoft.com/en-us/services/machine-learning-studio/), [Google AI](https://cloud.google.com/products/ai/), oder [Amazon SageMaker](https://aws.amazon.com/machine-learning/). Diese Produkte sind auf den ersten Blick sehr simple, man kommt jedoch wenn die Aufgabe etwas komplexer wird sehr schnell an die Grenzen. Man hat nicht wirklich Einfluss auf das was hinter diesen Drag&Drop Bildchen abgeht.
 
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
