@@ -75,7 +75,7 @@ options(warn = -1)
 
 <https://en.wikipedia.org/wiki/Data_mining>
 
-# Tag 2 - Technologien
+# Tag 2 - Arbeiten mit R
 
 ## Daten einlesen
 Es gibt verschiedene Moeglichkeiten Daten zu lesen. Der Readbefehl haengt vom Dateityp der Quelle ab. Die bis anhing fuer uns wichtigsten sind:
@@ -622,6 +622,13 @@ Ein [Dendogram](https://rpubs.com/gaston/dendrograms) zeigt hirarchisch gecluste
 ## AI as a Service
 Natuerlich gibt es auch diverse AI Services von Kommerziellen Anbietern wie z.B.[Microsoft Azure AI + Machine Learning](https://azure.microsoft.com/en-us/services/machine-learning-studio/), [Google AI](https://cloud.google.com/products/ai/), oder [Amazon SageMaker](https://aws.amazon.com/machine-learning/). Diese Produkte sind auf den ersten Blick sehr simple, man kommt jedoch wenn die Aufgabe etwas komplexer wird sehr schnell an die Grenzen. Man hat nicht wirklich Einfluss auf das was hinter diesen Drag&Drop Bildchen abgeht.
 
+# Tag 7 - Neuronale Netze und Faktor- / Clusteranalyse
+## Neuronale Netze - Konzepte
+Neuronen feuern wenn sie einen gewissen Schwellwert erreicht haben, die sogenannte Aktivierungs-, oder Sigmoidfuntion. Ein Neuron kann mehrere Eingaenge haben, jedoch hat es jeweils nur einen Ausgang, was entlang der Azons zu den Terminals wieder als Eingang (Dendriten) anderer Neuronen dienen kann.
+
+## Faktoranalyse
+
+## Clusteranalyse
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
 <!-- ```{r comment=''} -->
