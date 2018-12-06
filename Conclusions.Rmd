@@ -25,6 +25,7 @@ library(wordcloud)
 library(SnowballC)
 library(RColorBrewer)
 library(sjPlot)
+library(cluster)
 
 knit_hooks$set(webgl = hook_webgl)
 knitr::opts_chunk$set(echo = TRUE)
@@ -676,6 +677,20 @@ fa.diagram(HKA)
 ```
 
 ## Clusteranalyse
+
+```{r echo=FALSE}
+#Distanzen berechnen
+carsDataSub<-carsData[1:15,c(1,4)]
+# dist(carsDataSub, method="euclidean")
+# dist(carsDataSub, method="manhattan")
+# single_verfahren<-agnes(carsDataSub, stand = T, method = "single")
+complete_verfahren<-agnes(carsDataSub, stand = T, method = "complete")
+```
+
+Eine Submenge von mtcars wurde mit der Methode 'complete' hierarchisch geclustert. In Fig 7.5 kann z.B. drei Cluster erkennen, je nach Verbrauch und PS. Der Duster und Cadillac sind sehr PS-starke Autos die sehr viel Sprit verbrauchen. Im Cluster ganz links sind die Autos mit dem geringsten Verbrauch und in der Mitte diejenigen mit mittlerem Verbrauch.
+```{r, fig.cap="7.5 Complete Verfahren", fig.align="center"}
+plot(complete_verfahren, which.plots = 2, main = "Complete linkage, standardisiert")
+```
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
 <!-- ```{r comment=''} -->
