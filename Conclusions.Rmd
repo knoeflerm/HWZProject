@@ -24,6 +24,7 @@ library(proxy)
 library(wordcloud)
 library(SnowballC)
 library(RColorBrewer)
+library(sjPlot)
 
 knit_hooks$set(webgl = hook_webgl)
 knitr::opts_chunk$set(echo = TRUE)
@@ -624,7 +625,6 @@ Natuerlich gibt es auch diverse AI Services von Kommerziellen Anbietern wie z.B.
 
 # Tag 7 - Neuronale Netze und Faktor- / Clusteranalyse
 ## Neuronale Netze
-
 ###Konzepte
 Neuronen feuern wenn sie einen gewissen Schwellwert erreicht haben, die sogenannte **Aktivierungs-**, oder **Sigmoidfuntion**. Ein Neuron kann mehrere Eingaenge haben, jedoch hat es jeweils nur einen Ausgang, was entlang der Azons zu den Terminals wieder als Eingang (Dendriten) anderer Neuronen dienen kann. So kann ein neuronales Netz in n **Schichten** aufgebaut sein. Eingangsschicht, Ausgangsschicht und dazwischen n versteckte Schichten (hidden Layers).
 
@@ -635,6 +635,45 @@ Beim **unsupervised learning** wird kein Output vorgegeben. Die Gewichtsveraende
 Aehnlichkeit der Gewichte mit den Inputreizen.
 
 ## Faktoranalyse
+Ziel der Faktorenanalyse (FA) und der Hauptkomponentenanalyse (HKA) ist eine Variablenreduktion. Es werden nur die Kovarianzen aller Merkmale (meist sind es die Items eines Fragebogens) analysiert. Ziel ist es nicht, die vollständige Varianz der Merkmale aufzuklären, sondern nur ihre gemeinsame Varianz (die Kovarianz). Das Verfahren wird in erster Linie eingesetzt, wenn es darum geht, latente Konstrukte oder Strukturen hinter den Merkmalen zu entdecken.
+\
+Dazu berechnet man erst einmal die Korrelationsmatrix.
+
+```{r echo=FALSE}
+carsData<-mtcars
+data(carsData)
+coping<-carsData[, ]
+cor(coping, use = "complete.obs")
+```
+
+In Fig. 7.1 sind alle Werte gegeneinander paarweise aufgeplottet. Man kann sehen, dass nicht alle Werte Sinn machen, vorallendingen die mit wenigen verschiedenen Werten wie z.B. ob es ein V- oder Reihenmotor ist (vs), oder automatik- oder Schaltgetriebe (am).
+```{r echo=FALSE, fig.cap="7.1 Pairs", fig.align="center"}
+pairs(coping, panel = panel.smooth)
+```
+
+Untenstehende Warnings ignoriere ich mal gekonnt, da sie fuer meine Ausfuehrungen irrelevant sind. Die Screeplots in Fig. 7.2 und 7.3 zeigen klar den Knick bei drei faktoren, das Modell empfiehlt jedoch nur zwei Faktoren zu machen.
+```{r echo=FALSE, fig.cap="7.2 Parallel Analysis", fig.align="center"}
+fa.parallel(coping) #PC ist Hauptkomponentenanalyse, FA Faktoranalyse
+```
+
+```{r echo=FALSE, fig.cap="7.3 Scree", fig.align="center"}
+scree(coping)
+```
+
+Ich habe nun doch drei Faktoren verwendet, da fuer die drei der Eigenwert (ss loadings) jeweils groesser eins ist. Die **Kommunalitaet** (com) ist der Anteil der gemessenen Varianz der gesamten Varianz aller Variablen. **U2** stellt den Fehler dar, der sollte moeglichst klein sein. In Fig. 7.4 kann man erkennen, dass Variblen mit einem eher grossen u2 rot erscheinen.
+```{r echo=FALSE}
+Faktor<-fa(coping, nfactors = 3, rotate = "varimax")
+Faktor # com ist die Komplexitaet, u2 glaub der Fehler. ss loadings sind auch wichtig
+```
+
+## Hauptkomponentenanalyse
+Bei der HKA versucht man die vollständige Varianz aller Merkmale mit wenigen Faktoren zu erklären. Sie wird dann eingesetzt, wenn das Ziel darin besteht, die Datenstruktur zu reduzieren. 
+
+```{r echo=FALSE, fig.cap="7.4 Hauptkomponenten", fig.align="center"}
+HKA<-principal(coping, nfactors=3, rotate = "varimax")
+HKA
+fa.diagram(HKA)
+```
 
 ## Clusteranalyse
 <!-- # Anhang -->
