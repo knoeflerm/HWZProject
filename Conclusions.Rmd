@@ -158,11 +158,10 @@ part.female
 ```
 
 ### Subset
-Datensaetze mit gewissen Kriterien kann man auf verschiedene Arten auslesen, z.B. mit **which**, oder mit dem Befehl **subset**.
+Subdatensaetze mit gewissen Kriterien kann man auf verschiedene Arten auslesen, z.B. mit **which**, oder mit dem Befehl **subset**.
 ```{r}
 sampleDf[which(sampleDf$income>=140000),]
 subset(sampleDf, sampleDf$income>=140000)
-table(sampleDf$sex, sampleDf$education)
 ```
 
 ### Haeufigkeitstabelle
@@ -253,9 +252,9 @@ Im weiteren werden nicht mehr alle R Code Snippets im Report ersichtlich sein (e
 \
 Hypothesen dienen der **Management Beratung**, oder sie kommen sogar aus dem Management.
 
-* Am Anfang steht die **Diagnose**. Das Fachthema muss verstanden, das Problem genau identifiziert und es muss klar sein welche Daten benoetigt werden.
+* Am Anfang steht die **Diagnose**. Das Fachthema muss verstanden sein, das Problem genau identifiziert und es muss klar sein welche Daten benoetigt werden.
 * Nun kann eine **Hypothese** aufgestellt werden. Das Problem kann als hypothetische Ursache-Wirkung formuliert werden.
-* **Analyse** erstellen.Ursache-Wirkung anahnd von einem Datenmodell, Fragebogen erstellen. Entweder existieren bereits brauchbare Daten die gesammelt werden muessen, oder sie muessen erhoben werden.
+* **Analyse** erstellen. Ursache-Wirkung anahnd von einem Datenmodell, Fragebogen erstellen. Entweder existieren bereits brauchbare Daten die gesammelt werden muessen, oder sie muessen erhoben werden.
 * Nun kann ein **Entscheid** formuliert werden. Besagt der Test, dass die Hypothese signifikant ist, koennen Handlungsoptionen agbeleitet werden und die Wirkung der Massnahmen (theoretisch) gemessen werden.
 Die **Qualitaet** des Entscheids haengt von drei Aspekten ab:
     + **Repraesentativitaet**: Analyse wurde mit der korrekten Zielgruppe durchgefuehrt. Je groesser die Zielgruppe, desto besser
@@ -398,7 +397,7 @@ In Fig 4.3 kann man gut sehen, dass Autos mit Handschaltung (1) tendenziell weit
 # Tag 5 - Prognosen mittels Regressionsanalyse
 ## Regression
 ### Korrelation
-Die **Korrelation** von -0.852 zwischen 'Miles per Gallon' und 'Cylinder' ist nicht gerade gross, fuer dieses Beispiel jedoch ausreichend.
+Die **Korrelation** von -0.852 zwischen 'Miles per Gallon' und 'Cylinder' ist nicht gerade gross, fuer dieses Beispiel jedoch ausreichend. Die negative Korrelation bedeutet, dass je mehr 'Cylinder', desto weniger weit kommt ein Auto mit einer Gallone.
 \ Das Package 'mtcars' ist [hier](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html) beschrieben.
 ```{r}
 carsData<-mtcars
@@ -425,7 +424,7 @@ plot3d(x = carsData$wt, y = carsData$cyl, z = carsData$mpg, col=rainbow(1000))
 ```
 
 ### Standardisierte Regressionskoeffizienten
-Mit dem Befehl **scale()** koennen Merkmale standardisiert werden. Das heisst es werden alle Einheiten der Masse entfernt. Der Koeffizient gibt aber nur noch die relative Beziehung zu den Verteilungen der Merkmale an.
+Mit dem Befehl **scale()** koennen Merkmale standardisiert werden. Das heisst es werden alle Einheiten der Masse entfernt. Der Koeffizient gibt dann nur noch die relative Beziehung zu den Verteilungen der Merkmale an.
 ```{r}
 fit<-lm(mpg ~ cyl + wt + disp, data = carsData)
 summary(fit)
@@ -441,7 +440,7 @@ carsData
 ```
 
 #### Vorhersagen
-Der Verbrauch des Mazda RX4 sinkt bei gleichem Gewicht, jedoch der Hubraum (disp) auf nur vier, anstatt 6 Zylinder verteilt.
+Der Verbrauch des Mazda RX4 sinkt bei gleichem Gewicht, jedoch ist der Hubraum (disp) auf nur vier, anstatt 6 Zylinder verteilt.
 ```{r}
 fitCars<-lm(mpg ~ cyl + wt + disp, data = carsData)
 predsCars <- data.frame(cyl=4, wt=2.62, disp=160)
@@ -449,12 +448,12 @@ predict(fitCars, newdata=predsCars, interval="prediction")
 ```
 
 ### Korrelations-Analyse
-Mit einer Korrelationsanalyse kann man sich erst mal einen Ueberblick verschaffen wie gut oder schlecht die Daten miteinander korrelieren. Je naeher die Werte bei eins, desto besser korrelieren sie. In Fig. 5.2 ist eigentlich links unten und gegen rechts oben zweimal die gleiche Information enthalten, einfach mit vertauschten Achsen.
+Mit einer Korrelationsanalyse kann man sich erst mal einen Ueberblick verschaffen wie gut oder schlecht die Daten miteinander korrelieren. Je naeher die Werte bei eins, desto besser korrelieren sie. In Fig. 5.2 ist eigentlich links unten und gegen rechts oben zweimal die gleiche Information enthalten, einfach mit vertauschten Achsen. Die Plots sind gespiegelt.
 ```{r fig.cap="5.2 Simple Korrelationsmatrix", fig.align="center"}
 cor(carsData[, c("mpg", "cyl", "disp", "wt")])
 pairs(~ mpg + cyl + wt + disp, data = carsData)
 ```
-Fig. 5.3 zeigt einen Korrelations Scatter Plot mit etwas mehr Informationsgehalt. Korrelationskoeffizienten, Histogramme mit Density und die Scatterplots die auch in Fig. 5.2 dargestellt sind. Fuer rcorr kann man auch den type="pearson" verwenden was unterschiedliche Korrelationswerte ergibt, die ich aber an dieser Stelle nicht erklaeren kann.
+Fig. 5.3 zeigt einen Korrelations Scatter Plot mit etwas mehr Informationsgehalt. Korrelationskoeffizienten, Histogramme mit Density und die Scatterplots die auch in Fig. 5.2 dargestellt sind. Fuer rcorr kann man auch den type="pearson" verwenden was unterschiedliche Korrelationswerte ergibt.
 ```{r fig.cap="5.3 Graphische Korrelationsmatrix", fig.align="center"}
 carsDataReduced<-data.frame(carsData$mpg, carsData$cyl, carsData$wt, carsData$disp)
 carsDataMatrix<-data.matrix(carsDataReduced)
@@ -465,7 +464,7 @@ pairs.panels(carsDataReduced, main="Simple Scatterplot Matrix")
 ### Variablen Selektion
 Das Ziel der Variablenselektion ist es, aus einer großen Auswahl von potentiell erklärenden
 Variablen in einem Datensatz diejenigen herauszufinden, mit denen ein Regressionsmodell
-die Vorhersage der Zielvariablen am Besten beschreibt. Die Variablenauswahl erfolgt zum einen aus inhaltlichen Gesichtspunkten und zum anderen mit Hilfe unterschiedlicher statistischer Verfahren. Bekannte Selektionsmethoden sind beispielsweise die Backward-, Forward- oder Stepwise-Verfahren
+die Vorhersage der Zielvariablen am besten beschreibt. Die Variablenauswahl erfolgt zum einen aus inhaltlichen Gesichtspunkten und zum anderen mit Hilfe unterschiedlicher statistischer Verfahren. Bekannte Selektionsmethoden sind beispielsweise die Backward-, Forward- oder Stepwise-Verfahren
 \
 Mit der Funktion **step()** kann in R eine Variablenselektion durchgefuehrt werden. Je kleiner der AIC-Wert, desto mehr Erklaerungsgehalt besitzt das Modell.
 ```{r}
@@ -487,12 +486,13 @@ Am p-value kann man sehen, dass das Gewicht gekoppelt mit der Anzahl Zylinder fu
 ```{r}
 fitCars<-lm(mpg ~ cyl + wt + disp, data = carsData)
 step(fitCars)
+was macht update?
 Reg4<- update(fitCars, ~ + wt:cyl.f)
 summary(Reg4)
 ```
 
 # Tag 6 - Textmining
-Text Mining, seltener auch Textmining, Text Data Mining oder Textual Data Mining, ist ein Bündel von Algorithmus-basierten Analyseverfahren zur Entdeckung von Bedeutungsstrukturen aus un- oder schwachstrukturierten Textdaten. Mit statistischen und linguistischen Mitteln erschließt Text-Mining-Software aus Texten Strukturen, die die Benutzer in die Lage versetzen sollen, Kerninformationen der verarbeiteten Texte schnell zu erkennen. Im Optimalfall liefern Text-Mining-Systeme Informationen, von denen die Benutzer zuvor nicht wissen, ob und dass sie in den verarbeiteten Texten enthalten sind. Bei zielgerichteter Anwendung sind Werkzeuge des Text Mining außerdem in der Lage, Hypothesen zu generieren, diese zu überprüfen und schrittweise zu verfeinern.
+Text Mining, seltener auch Text Data Mining oder Textual Data Mining, ist ein Buendel von Algorithmus-basierten Analyseverfahren zur Entdeckung von Bedeutungsstrukturen aus un- oder schwachstrukturierten Textdaten. Mit statistischen und linguistischen Mitteln erschließt Text-Mining-Software aus Texten Strukturen, die die Benutzer in die Lage versetzen sollen, Kerninformationen der verarbeiteten Texte schnell zu erkennen. Im Optimalfall liefern Text-Mining-Systeme Informationen, von denen die Benutzer zuvor nicht wissen, ob und dass sie in den verarbeiteten Texten enthalten sind. Bei zielgerichteter Anwendung sind Werkzeuge des Text Mining außerdem in der Lage, Hypothesen zu generieren, diese zu überprüfen und schrittweise zu verfeinern.
 \
 (Quelle: [Wikipedia](https://de.wikipedia.org/wiki/Text_Mining))
 
@@ -595,7 +595,7 @@ titles <- c("Zuerich")
 
 articles <- character(length(titles))
 
-#not need for a for loop in this example
+#no need for a for loop in this example
 for (i in 1:length(titles)) {
   articles[i] <- stri_flatten(readLines(stri_paste(wiki, titles[i])), col = " ")
 }
@@ -614,14 +614,14 @@ commonality.cloud(sgzh_m, max.words = 100, colors = "steelblue1", scale = c(6,0.
 
 ### Weitere Grafiken
 
-Eine **Comparison cloud** zeigt die Woerter der beiden Staedt voneinander getrennt in einer Cloud.
+Eine **Comparison cloud** zeigt die Woerter der beiden Staedte voneinander getrennt in einer Cloud.
 \
 [Words in Common](https://rpubs.com/williamsurles/316682) stellt die Woerter der beiden Staedt nach Haeufigkeit gegenueber.
 \
 Ein [Dendogram](https://rpubs.com/gaston/dendrograms) zeigt hirarchisch geclusterte Woerter nach Haeufigkeit in einem Tree auf.
 
 ## AI as a Service
-Natuerlich gibt es auch diverse AI Services von Kommerziellen Anbietern wie z.B.[Microsoft Azure AI + Machine Learning](https://azure.microsoft.com/en-us/services/machine-learning-studio/), [Google AI](https://cloud.google.com/products/ai/), oder [Amazon SageMaker](https://aws.amazon.com/machine-learning/). Diese Produkte sind auf den ersten Blick sehr simple, man kommt jedoch wenn die Aufgabe etwas komplexer wird sehr schnell an die Grenzen. Man hat nicht wirklich Einfluss auf das was hinter diesen Drag&Drop Bildchen abgeht.
+Natuerlich gibt es auch diverse AI Services von Kommerziellen Anbietern wie z.B.[Microsoft Azure AI + Machine Learning](https://azure.microsoft.com/en-us/services/machine-learning-studio/), [Google AI](https://cloud.google.com/products/ai/), oder [Amazon SageMaker](https://aws.amazon.com/machine-learning/). Diese Produkte sind auf den ersten Blick sehr simpel, man kommt jedoch wenn die Aufgabe etwas komplexer wird sehr schnell an die Grenzen. Man hat nicht wirklich Einfluss auf das was hinter diesen Drag&Drop Bildchen abgeht.
 
 # Tag 7 - Neuronale Netze und Faktor- / Clusteranalyse
 ## Neuronale Netze
@@ -629,7 +629,7 @@ Natuerlich gibt es auch diverse AI Services von Kommerziellen Anbietern wie z.B.
 Neuronen feuern wenn sie einen gewissen Schwellwert erreicht haben, die sogenannte **Aktivierungs-**, oder **Sigmoidfuntion**. Ein Neuron kann mehrere Eingaenge haben, jedoch hat es jeweils nur einen Ausgang, was entlang der Azons zu den Terminals wieder als Eingang (Dendriten) anderer Neuronen dienen kann. So kann ein neuronales Netz in n **Schichten** aufgebaut sein. Eingangsschicht, Ausgangsschicht und dazwischen n versteckte Schichten (hidden Layers).
 
 ### Gewichte
-Die Gewichte sind das wichtigste in neuronalen Netzen, damit 'lernen' sie. Das Eingangssignal wird mit dem Gewicht multipliziert. Das Neuron summiert nun alle Werte aller Eingangsignale und falls dies den Schwellwert erreicht, 'feuert' das Neuron den Ausgangswert. Die Gewichte werden solange veraendert, bis das Resultat ganz am Ende des Netzes dem entspricht was man erwartet. Dies nennt man **supervised learning**, da man weiss was herauskommen sollte und das System solange lernen laesst, bis Soll- und Istausgabe uebereinstimmen. Wird der Fehler wieder vorne ins Netz gespiesen, nennt man dies **Fehlerrueckfuehrung (Backpropagation)**.
+Die Gewichte sind das wichtigste in neuronalen Netzen, damit 'lernen' sie. Das Eingangssignal wird mit dem Gewicht multipliziert. Das Neuron summiert nun alle Werte aller Eingangsignale auf und falls dies den Schwellwert erreicht, 'feuert' das Neuron den Ausgangswert. Die Gewichte werden solange veraendert, bis das Resultat ganz am Ende des Netzes dem entspricht was man erwartet. Dies nennt man **supervised learning**, da man weiss was herauskommen sollte und das System solange lernen laesst, bis Soll- und Istausgabe uebereinstimmen. Wird der Fehler wieder vorne ins Netz gespiesen, nennt man dies **Fehlerrueckfuehrung (Backpropagation)**.
 \
 Beim **unsupervised learning** wird kein Output vorgegeben. Die Gewichtsveraenderungen erfolgen in Abhaengigkeit der
 Aehnlichkeit der Gewichte mit den Inputreizen.
@@ -660,7 +660,7 @@ fa.parallel(coping) #PC ist Hauptkomponentenanalyse, FA Faktoranalyse
 scree(coping)
 ```
 
-Ich habe nun doch drei Faktoren verwendet, da fuer die drei der Eigenwert (ss loadings) jeweils groesser eins ist. Die **Kommunalitaet** (com) ist der Anteil der gemessenen Varianz der gesamten Varianz aller Variablen. **U2** stellt den Fehler dar, der sollte moeglichst klein sein. In Fig. 7.4 kann man erkennen, dass Variblen mit einem eher grossen u2 rot erscheinen.
+Ich habe nun doch drei Faktoren verwendet, da fuer die drei der Eigenwert (ss loadings) jeweils groesser Eins ist. Die **Kommunalitaet** (com) ist der Anteil der gemessenen Varianz der gesamten Varianz aller Variablen. **U2** stellt den Fehler dar, der sollte moeglichst klein sein. In Fig. 7.4 kann man erkennen, dass Variblen mit einem eher grossen u2 rot erscheinen.
 ```{r echo=FALSE}
 Faktor<-fa(coping, nfactors = 3, rotate = "varimax")
 Faktor # com ist die Komplexitaet, u2 glaub der Fehler. ss loadings sind auch wichtig
@@ -686,7 +686,7 @@ carsDataSub<-carsData[1:15,c(1,4)]
 complete_verfahren<-agnes(carsDataSub, stand = T, method = "complete")
 ```
 
-Eine Submenge von mtcars wurde mit der Methode 'complete' hierarchisch geclustert. In Fig 7.5 kann z.B. drei Cluster erkennen, je nach Verbrauch und PS. Der Duster und Cadillac sind sehr PS-starke Autos die sehr viel Sprit verbrauchen. Im Cluster ganz links sind die Autos mit dem geringsten Verbrauch und in der Mitte diejenigen mit mittlerem Verbrauch.
+Eine Submenge von mtcars wurde mit der Methode 'complete' hierarchisch geclustert. In Fig 7.5 koennen z.B. drei Cluster erkannt werden, je nach Verbrauch und PS. Der Duster und der Cadillac sind sehr PS-starke Autos die sehr viel Sprit verbrauchen. Im Cluster ganz links sind die Autos mit dem geringsten Verbrauch und in der Mitte diejenigen mit mittlerem Verbrauch.
 ```{r, fig.cap="7.5 Complete Verfahren", fig.align="center"}
 plot(complete_verfahren, which.plots = 2, main = "Complete linkage, standardisiert")
 ```
