@@ -90,7 +90,7 @@ Es gibt verschiedene Moeglichkeiten Daten zu lesen. Der Readbefehl haengt vom Da
 \newline
 
 ```{r}
-load("lib/Umfrage.rda")
+load("D:/Projects/HWZ/lib/Umfrage.rda")
 ```
 
 ## Uebersicht der Daten
@@ -486,8 +486,7 @@ Am p-value kann man sehen, dass das Gewicht gekoppelt mit der Anzahl Zylinder fu
 ```{r}
 fitCars<-lm(mpg ~ cyl + wt + disp, data = carsData)
 step(fitCars)
-was macht update?
-Reg4<- update(fitCars, ~ + wt:cyl.f)
+Reg4<- update(fitCars, ~ + wt:cyl.f) # update fuegt dem Modell eine Variable hinzu (https://www.r-bloggers.com/using-the-update-function-during-variable-selection/)
 summary(Reg4)
 ```
 
