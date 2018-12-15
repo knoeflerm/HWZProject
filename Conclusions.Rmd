@@ -26,6 +26,10 @@ library(SnowballC)
 library(RColorBrewer)
 library(sjPlot)
 library(cluster)
+library(rpart)
+library(rpart.plot)
+library(rattle)
+library(dplyr)
 
 knit_hooks$set(webgl = hook_webgl)
 knitr::opts_chunk$set(echo = TRUE)
@@ -109,7 +113,8 @@ head(Umfrage,5) # zeigt die ersten x Datensaetze an (Default ist 6)
 ### Zufallswerte
 Im Folgenden wird ein Data Frame mit verschiedenen, rein zufaelligen Werten erzeugt. Entweder wird ein Observations count via **Shiny App** als Parameter ins **RMarkdown** gegeben, ansonsten wird ein Defaultwert genommen.
 ```{r}
-minObservations<-10
+minObservations<-100
+subObservations<-10
 if (params$n == "NA" | params$n < minObservations) {
   observationCount<-minObservations
 } else {
@@ -145,7 +150,7 @@ Berechnen des Durchschnittalters pro Geschlecht:
 tapply(df$age, df$sex, mean, na.rm=T)
 ```
 
-Aus dem Dataframe der **`r nrow(df)`** Datensaetze hat, die ersten **`r minObservations`** Datensaetze nehmen und daraus einen neuen erzeugen.
+Aus dem Dataframe der **`r nrow(df)`** Datensaetze hat, die ersten **`r subObservations`** Datensaetze nehmen und daraus einen neuen erzeugen.
 ```{r}
 sampleDf<-df[1:minObservations,]
 sampleDf
@@ -689,6 +694,29 @@ Eine Submenge von mtcars wurde mit der Methode 'complete' hierarchisch gecluster
 ```{r, fig.cap="7.5 Complete Verfahren", fig.align="center"}
 plot(complete_verfahren, which.plots = 2, main = "Complete linkage, standardisiert")
 ```
+
+# Tag 8 - Decision Trees
+#https://rstudio-pubs-static.s3.amazonaws.com/123908_3df6d25c8ad04030a2a429661125a59b.html#/16
+Entscheidungsbaeume sind geordnete, gerichtete Baeume, die der Darstellung von Entscheidungsregeln dienen. Die grafische Darstellung als Baumdiagramm veranschaulicht hierarchisch aufeinanderfolgende Entscheidungen. Sie haben eine Bedeutung in zahlreichen Bereichen, in denen automatisch klassifiziert wird oder aus Erfahrungswissen formale Regeln hergeleitet oder dargestellt werden.
+```{r}
+titanic3 <- "https://goo.gl/At238b" %>%
+  read.csv %>% # read in the data
+  select(survived, embarked, sex, sibsp, parch, fare) %>%
+  mutate(embarked = factor(embarked), sex = factor(sex))
+titanic3
+dataDecisionTree <- c("training", "test") %>%
+  sample(nrow(titanic3), replace = T) %>%
+  split(titanic3, .)
+
+rtree_fit <- rpart(survived ~ ., dataDecisionTree$training) 
+plot(rtree_fit, uniform=TRUE, main="Classification Tree f?r Kaufentscheid")
+text(rtree_fit, use.n=TRUE, all=TRUE, cex=.8)
+rpart.plot(rtree_fit)
+
+```
+
+## Classification Trees
+## Regression Trees
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
 <!-- ```{r comment=''} -->
