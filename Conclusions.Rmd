@@ -696,26 +696,82 @@ plot(complete_verfahren, which.plots = 2, main = "Complete linkage, standardisie
 ```
 
 # Tag 8 - Decision Trees
-#https://rstudio-pubs-static.s3.amazonaws.com/123908_3df6d25c8ad04030a2a429661125a59b.html#/16
 Entscheidungsbaeume sind geordnete, gerichtete Baeume, die der Darstellung von Entscheidungsregeln dienen. Die grafische Darstellung als Baumdiagramm veranschaulicht hierarchisch aufeinanderfolgende Entscheidungen. Sie haben eine Bedeutung in zahlreichen Bereichen, in denen automatisch klassifiziert wird oder aus Erfahrungswissen formale Regeln hergeleitet oder dargestellt werden.
-```{r}
-titanic3 <- "https://goo.gl/At238b" %>%
-  read.csv %>% # read in the data
-  select(survived, embarked, sex, sibsp, parch, fare) %>%
-  mutate(embarked = factor(embarked), sex = factor(sex))
-titanic3
-dataDecisionTree <- c("training", "test") %>%
-  sample(nrow(titanic3), replace = T) %>%
-  split(titanic3, .)
-
-rtree_fit <- rpart(survived ~ ., dataDecisionTree$training) 
-plot(rtree_fit, uniform=TRUE, main="Classification Tree f?r Kaufentscheid")
-text(rtree_fit, use.n=TRUE, all=TRUE, cex=.8)
-rpart.plot(rtree_fit)
-
-```
 
 ## Classification Trees
+Im Hintergrund wird ein Csv mit Daten des Titanicungluecks eingelesen. Da die Daten nach Klasse (pclass) sortiert sind, wird der Datensatz erst einmal gemischelt (sample()), es werden unbenoetigte Merkmale entfernt und Faktoren mit verstaendlichem Text versehen. Danach werden die gesaeuberten Daten in einen Trainingsdatensatz (80%) und einen Testdatensatz (20%) geteilt.
+```{r echo=FALSE}
+#https://www.guru99.com/r-decision-trees.html
+set.seed(678)
+titanic <-read.csv("D:/Projects/HWZ/lib/titanic.csv")
+shuffle_index <- sample(1:nrow(titanic))
+titanic <- titanic[shuffle_index, ]
+clean_titanic <- titanic %>%
+select(-c(home.dest, cabin, name, X, ticket)) %>%
+#Convert to factor level
+	mutate(pclass = factor(pclass, levels = c(1, 2, 3), labels = c('Upper', 'Middle', 'Lower')),
+	survived = factor(survived, levels = c(0, 1), labels = c('Died', 'Survived'))) %>%
+na.omit()
+# glimpse(clean_titanic)
+create_train_test <- function(data, size = 0.8, train = TRUE) {
+    n_row = nrow(data)
+    total_row = size * n_row
+    train_sample <- 1: total_row
+    if (train == TRUE) {
+        return (data[train_sample, ])
+    } else {
+        return (data[-train_sample, ])
+    }
+}
+data_train <- create_train_test(clean_titanic, 0.8, train = TRUE)
+data_test <- create_train_test(clean_titanic, 0.8, train = FALSE)
+# prop.table(table(data_train$survived))
+# prop.table(table(data_test$survived))
+```
+```{r}
+nrow(data_train)
+```
+Die Daten werden nun mit dem Befehl **rpart** klassifiziert und mit **rpart.plot** in einem Entscheidungsbaum dargestellt.
+```{r fig.cap="8.1 Classification Tree", fig.align="center"}
+fit <- rpart(survived~., data = data_train, method = 'class')
+rpart.plot(fit, extra = 106)
+```
+
+In Fig. 8.1 kann man von der Root beginnend herauslesen
+
+* dass 41% der Leute ueberlebten
+* von allen Passagieren 63% Maenner waren wovon 21% ueberlebten
+* von den Maennern die ueber 3.5 Jahre alt waren nur 19% ueberlebten
+* jedoch ueberlebten 74% der maennlichen Babies.
+
+\
+Die Blaetter sind mit Survived (gruen) beschriftet sobald mehr als 50% der Leute an dieser Entscheidungsstelle ueberlebten. Ansonsten ist das Leaf gruen.
+
+\
+Rechenbeispiel fuer das Leaf ganz links unten:
+\
+61% aller Menschen an Board waren Maenner ueber 3.5 Jahre (836 * 0.61 = knapp 510), wovon aber nur 19% ueberlebten (510 * 0.19 = knapp 97).
+
+\
+Das Blatt ganz rechts unten zeigt die groesste Ueberlebenswahrscheinlichkeit auf. Frauen, die ein Ticket der mittleren oder oberen Klasse buchten, ueberlebten zu 94% ((836 * 0.22) * 0.94 = knapp 173).
+
+### Prediction
+```{r fig.cap="8.2 Confusion Matrix", fig.align="center"}
+predict_unseen <-predict(fit, data_test, type = 'class')
+table_mat <- table(data_test$survived, predict_unseen)
+table_mat
+```
+
+Table 8.2 zeigt, dass das Modell korrekt 106 Passagiere als tot vorhersagt, jedoch faelschlicherweise 15 ueberlebende als tot. In der zweiten Zeile sind die vom Modell vorhergesagten Ueberlebenden, wobei das Modell 30 Passagiere als Survivors vorhersagte, obwohl sie gestorben sind.
+
+```{r fig.cap="8.3 Vorhersage", fig.align="center"}
+predictPassenger<-data.frame(pclass="Lower", sex="male", age=43, sibsp=2, parch=2, fare=12, embarked="S")
+prediction <-predict(fit, predictPassenger, type = 'class')
+prediction
+```
+
+Die Vorhersage in Fig. 8.3 zeigt, dass ich wahrscheinlich gestorben waere.
+
 ## Regression Trees
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
