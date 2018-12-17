@@ -699,6 +699,8 @@ plot(complete_verfahren, which.plots = 2, main = "Complete linkage, standardisie
 Entscheidungsbaeume sind geordnete, gerichtete Baeume, die der Darstellung von Entscheidungsregeln dienen. Die grafische Darstellung als Baumdiagramm veranschaulicht hierarchisch aufeinanderfolgende Entscheidungen. Sie haben eine Bedeutung in zahlreichen Bereichen, in denen automatisch klassifiziert wird oder aus Erfahrungswissen formale Regeln hergeleitet oder dargestellt werden.
 
 ## Classification Trees
+Classification Trees haben ein kategorisch abhaengiges Merkmal.
+\
 Im Hintergrund wird ein Csv mit Daten des Titanicungluecks eingelesen. Da die Daten nach Klasse (pclass) sortiert sind, wird der Datensatz erst einmal gemischelt (sample()), es werden unbenoetigte Merkmale entfernt und Faktoren mit verstaendlichem Text versehen. Danach werden die gesaeuberten Daten in einen Trainingsdatensatz (80%) und einen Testdatensatz (20%) geteilt.
 ```{r echo=FALSE}
 #https://www.guru99.com/r-decision-trees.html
@@ -782,7 +784,41 @@ prediction
 
 
 ## Regression Trees
+Regression Trees haben ein kontinuierlich abhaengiges Merkmal.
+\
 
+```{r fig.cap="8.2 Regression Tree", fig.align="center"}
+fit <- rpart(age~., data = data_train, method = 'anova')
+rpart.plot(fit)
+```
+
+```{r}
+mean(data_train$age, na.rm = TRUE)
+```
+
+In Fig. 8.2 kann man im Root-Leaf sehen, dass das Durchschnittsalter 30 Jahre betraegt. Eher aeltere Leute konnten sich ein Erstklassticket leisten. Von den Ueberlebenden mit Erstklassticket war das Durchschnittsalter 36, von den gestorbenen 43 was 10% aller Passagiere ausmacht.
+\
+parch => Anzahl Eltern/Kinder an Board
+\
+sisbs => Anzahl Geschwister/Lebensgefaehrten
+\
+Zuunterst das dritte Blatt von links zeigt Frauen die ueberlebt haben, mit null oder einem Partner unterwegs waren und eins bis zwei Kinder hatten. Das Durchschnittsalter dieser Gruppe war 20.
+\
+Zum Vergleich eine Prediction auf dem geschaetzten linearen Modell auf den Trainingsdaten
+```{r}
+fit<-lm(age~., data_train)
+predictFemalePassenger<-data.frame(pclass="Lower", sex="female", survived="Survived", sibsp=1, parch=1, fare=12, embarked="S")
+prediction <-predict(fit, predictFemalePassenger, interval="prediction")
+prediction
+```
+
+In den Testdaten ist das Durchschnittsalter dieser Gruppe tiefer
+```{r}
+fit<-lm(age~., data_test)
+predictFemalePassenger<-data.frame(pclass="Lower", sex="female", survived="Survived", sibsp=1, parch=1, fare=12, embarked="S")
+prediction <-predict(fit, predictFemalePassenger, interval="prediction")
+prediction
+```
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
 <!-- ```{r comment=''} -->
