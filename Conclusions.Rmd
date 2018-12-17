@@ -756,23 +756,33 @@ Rechenbeispiel fuer das Leaf ganz links unten:
 Das Blatt ganz rechts unten zeigt die groesste Ueberlebenswahrscheinlichkeit auf. Frauen, die ein Ticket der mittleren oder oberen Klasse buchten, ueberlebten zu 94% ((836 * 0.22) * 0.94 = knapp 173).
 
 ### Prediction
-```{r fig.cap="8.2 Confusion Matrix", fig.align="center"}
+Folgende Confusion Matrix zeigt, dass das Modell korrekt 106 Passagiere als tot vorhersagt, jedoch faelschlicherweise 15 ueberlebende als tot. In der zweiten Zeile sind die vom Modell vorhergesagten Ueberlebenden, wobei das Modell 30 Passagiere als Survivors vorhersagte, obwohl sie gestorben sind.
+
+```{r}
 predict_unseen <-predict(fit, data_test, type = 'class')
 table_mat <- table(data_test$survived, predict_unseen)
 table_mat
 ```
 
-Table 8.2 zeigt, dass das Modell korrekt 106 Passagiere als tot vorhersagt, jedoch faelschlicherweise 15 ueberlebende als tot. In der zweiten Zeile sind die vom Modell vorhergesagten Ueberlebenden, wobei das Modell 30 Passagiere als Survivors vorhersagte, obwohl sie gestorben sind.
+Die Testgenauigkeit betraegt 78%, das heisst im Testdatensatz wurden 78% der Ueberlebenden richtig erkannt.
 
-```{r fig.cap="8.3 Vorhersage", fig.align="center"}
+```{r}
+accuracy_Test <- sum(diag(table_mat)) / sum(table_mat)
+print(paste('Testgenauigkeit', accuracy_Test))
+```
+
+
+Folgende Vorhersage zeigt, dass ich wahrscheinlich gestorben waere.
+
+```{r}
 predictPassenger<-data.frame(pclass="Lower", sex="male", age=43, sibsp=2, parch=2, fare=12, embarked="S")
 prediction <-predict(fit, predictPassenger, type = 'class')
 prediction
 ```
 
-Die Vorhersage in Fig. 8.3 zeigt, dass ich wahrscheinlich gestorben waere.
 
 ## Regression Trees
+
 <!-- # Anhang -->
 <!-- ## RMarkdown code -->
 <!-- ```{r comment=''} -->
