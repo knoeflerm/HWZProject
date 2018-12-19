@@ -136,27 +136,27 @@ income<-round(runif(observationCount,min=60000,max=180000))
 head(income)
 education<-sample(c("Grundschule","Lehre","Hochschule"),size=observationCount,replace=T)
 head(education)
-df<-data.frame(ids,sex,age,size,income,education)
-head(df,minObservations)
-df$sex.f<-as.factor(df$sex)
-dim(df)
+generatedDataFrame<-data.frame(ids,sex,age,size,income,education)
+head(generatedDataFrame,minObservations)
+generatedDataFrame$sex.f<-as.factor(generatedDataFrame$sex)
+dim(generatedDataFrame)
 ```
 
 ### Duplikate
 Es waere sehr verwunderlich, wenn es in diesem Dataframe zwei genau gleiche Datensaetze haette.
 ```{r}
-any(duplicated(df))
+any(duplicated(generatedDataFrame))
 ```
 
 ### Berechnungen und Veraenderungen im Dataframe
 Berechnen des Durchschnittalters pro Geschlecht:
 ```{r}
-tapply(df$age, df$sex, mean, na.rm=T)
+tapply(generatedDataFrame$age, generatedDataFrame$sex, mean, na.rm=T)
 ```
 
-Aus dem Dataframe der **`r nrow(df)`** Datensaetze hat, die ersten **`r subObservations`** Datensaetze nehmen und daraus einen neuen erzeugen.
+Aus dem Dataframe der **`r nrow(generatedDataFrame)`** Datensaetze hat, die ersten **`r subObservations`** Datensaetze nehmen und daraus einen neuen erzeugen.
 ```{r}
-sampleDf<-df[1:subObservations,]
+sampleDf<-generatedDataFrame[1:subObservations,]
 sampleDf
 ```
 
@@ -204,21 +204,21 @@ head(dataMatrix, minObservations)
 Einige Plots und Histogramme auf dem originalen Dataframe. Da saemtliche Daten im Dataframe zufaellig erzeugt wurden, sehen die Grafiken und Kurven natuerlich auch willkuerlich und etwas chaotisch aus.
 
 ```{r ,echo=TRUE, fig.cap="Fig. 3.1 Histogramm mit Dichte (Normalverteilung)", fig.align="center"}
-hist(df$age, prob=T)
-lines(density(df$age), col="red")
+hist(generatedDataFrame$age, prob=T)
+lines(density(generatedDataFrame$age), col="red")
 ```
 Man sieht dem Scatterplot in Fig 3.2 an, dass die Daten zufaellig generiert wurden.
 ```{r ,echo=TRUE, fig.cap="Fig. 3.2 Scatterplot Einkommen nach Alter", fig.align="center"}
-plot(df$age, df$income, type="p", main="Scatterplot")
+plot(generatedDataFrame$age, generatedDataFrame$income, type="p", main="Scatterplot")
 ```
 
 ```{r ,echo=TRUE, fig.cap="Fig. 3.3 Histogramm Income", fig.align="center"}
-hist(df$income, main="Histogramm")
+hist(generatedDataFrame$income, main="Histogramm")
 ```
 
 ## Boxplot
 ```{r ,echo=TRUE, fig.cap="Fig. 3.4 Boxplot nach Income", fig.align="center"}
-boxplot(df$income, main="Boxplot")
+boxplot(generatedDataFrame$income, main="Boxplot")
 ```
 Ein Boxplot beinhaltet fuenf Informationen. Der dicke Strich im Kasten ist der Median, der obere und untere Rand des Kastens zeigen die Quantile Q1 (25% der Werte sind kleiner als dieser Wert) und Q3 (25% der Werte sind groesser als dieser Wert) an, der unterste Strich ist das Minimum und der oberste Strich das Maximum
 
