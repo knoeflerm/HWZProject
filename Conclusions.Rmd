@@ -37,7 +37,7 @@ options(warn = -1)
 
 ```
 # Einleitung
-Diese Arbeit wurde in einem **RStudio-Projet** mit **RMarkdown** und **Shiny** umgesetzt. Die Shiny-App ist lediglich ein Proof of Concept fuer mich um mal das Zusammenspiel zu erproben. Sie besteht lediglich aus einem Schieber, mit dem die Anzahl Beobachtungen fuer einen zufaellig generierten Dataframe einstellen werden kann und einem Button, der dann das RMarkdown rendert (knitted). Der komplette **Code** ist auf [Github](https://github.com/knoeflerm/HWZProject) verfuegbar. Die Arbeit sollte somit fuer jeden **reproduzierbar** sein.
+Diese Arbeit wurde in einem **RStudio-Project** mit **RMarkdown** und **Shiny** umgesetzt. Die Shiny-App ist lediglich ein Proof of Concept um mal das Zusammenspiel zu erproben. Sie besteht lediglich aus einem Schieber, mit dem die Anzahl Beobachtungen fuer einen zufaellig generierten Dataframe eingestellt werden kann und einem Button, der dann das RMarkdown rendert (knitted). Der komplette **Code** ist auf [Github](https://github.com/knoeflerm/HWZProject) verfuegbar. Die Arbeit sollte somit fuer jeden **reproduzierbar** sein.
 \
 Da RMarkdown alles untereinander rendert, ist es etwas schwieirig was denn nun drei Folien pro Tag sind. Oft wird jedoch auch einfach nur R-Output gezeigt der viel Platz benoetigt, jedoch nur ein kleiner Teil wichtig ist. Trotzdem ist es fuer mich spaeter einfacher die Gedanken nachzuvollziehen, wenn ich den ganzen Output habe.
 
@@ -88,7 +88,7 @@ Da RMarkdown alles untereinander rendert, ist es etwas schwieirig was denn nun d
 # Tag 2 - Arbeiten mit R
 
 ## Daten einlesen
-Es gibt verschiedene Moeglichkeiten Daten zu lesen. Der Readbefehl haengt vom Dateityp der Quelle ab. Die bis zum jetzigen Zeitpunkt fuer uns wichtigsten sind:
+Es gibt verschiedene Moeglichkeiten Daten zu lesen. Der Readbefehl haengt vom Dateityp der Quelle ab. Die wichtigsten sind:
 
 * read.table("FullPath/FileName.txt")
 * read.csv("FullPath/FileName.csv")
@@ -167,7 +167,7 @@ part.female
 ```
 
 ### Subset
-Subdatensaetze mit gewissen Kriterien kann man auf verschiedene Arten auslesen, z.B. mit **which**, oder mit dem Befehl **subset**.
+Subdatensaetze mit gewissen Kriterien kann man auf verschiedene Arten auslesen, z.B. mit dem Befehl **which**, oder **subset**.
 ```{r}
 sampleDf[which(sampleDf$income>=140000),]
 subset(sampleDf, sampleDf$income>=140000)
@@ -181,21 +181,25 @@ xtabs(~sex + education, data=sampleDf)
 ```
 
 ### Matrix
-Der Data Frame wird in eine Matrix konvertiert und mit anderen Spalten- und Zeilennamen versehen. Man beachte den Unterschied der Matrix wenn sie mit dem Befehl as.matrix(), oder data.matrix() konvertiert wurde.
+Der Data Frame wird in eine Matrix konvertiert und mit anderen Spalten- und Zeilennamen versehen. Die Befehle as.matrix() und data.matrix() konvertieren die Daten unterschiedlich. Bei as.matrix() werden alle Daten in Character umgewandelt, der Datentyp geht somit verloren. So kann z.B. der summary() Befehl keine Mediane oder Means mehr berechnen.
 ```{r}
 columnNames<-c("ID", "Geschl.", "Alter", "Groesse", "Einkommen", "Ausbildung", "Geschl.f")
 rowNames<-NULL
 for (id in sampleDf$ids) {
  rowNames <- c(rowNames, paste('Obs.', id, collapse = "," ))
 }
+
 asMatrix<-as.matrix(sampleDf)
 dimnames(asMatrix) <- list(rowNames, columnNames)
 asMatrix<-subset(asMatrix,select=-ID)
 head(asMatrix, minObservations)
+summary(asMatrix)
+
 dataMatrix<-data.matrix(sampleDf)
 dimnames(dataMatrix) <- list(rowNames, columnNames)
 dataMatrix<-subset(dataMatrix, select=-ID)
 head(dataMatrix, minObservations)
+summary(dataMatrix)
 ```
 
 # Tag 3 - Dateninspektion und Visualisierung
@@ -252,22 +256,22 @@ plot(x = dfFeather[, 2], y = dfFeather[, 1], plt = c(0, 10, -5, 5), cex = 0.1, a
 ```
 
 # Tag 4 - Hypothesen
-Im weiteren werden nicht mehr alle R Code Snippets im Report ersichtlich sein (echo=FALSE). Das vollstaendige Markdown mit R-Code ist im Anhang ersichtlich.
+Im Weiteren werden nicht mehr alle R Code Snippets im Report ersichtlich sein (echo=FALSE). Das vollstaendige Markdown mit R-Code kann von [Github](https://github.com/knoeflerm/HWZProject) herunter geladen werden.
 
 \
 Hypothesen dienen der **Management Beratung**, oder sie kommen sogar aus dem Management.
 
 * Am Anfang steht die **Diagnose**. Das Fachthema muss verstanden sein, das Problem genau identifiziert und es muss klar sein welche Daten benoetigt werden.
 * Nun kann eine **Hypothese** aufgestellt werden. Das Problem kann als hypothetische Ursache-Wirkung formuliert werden.
-* **Analyse** erstellen. Ursache-Wirkung anahnd von einem Datenmodell, Fragebogen erstellen. Entweder existieren bereits brauchbare Daten die gesammelt werden muessen, oder sie muessen erhoben werden.
-* Nun kann ein **Entscheid** formuliert werden. Besagt der Test, dass die Hypothese signifikant ist, koennen Handlungsoptionen agbeleitet werden und die Wirkung der Massnahmen (theoretisch) gemessen werden.
+* **Analyse** erstellen. Ursache-Wirkung anhand von einem Datenmodell, Fragebogen erstellen. Entweder existieren bereits brauchbare Daten die gesammelt werden muessen, oder sie muessen erhoben werden.
+* Nun kann ein **Entscheid** formuliert werden. Besagt der Test, dass die Hypothese signifikant ist, koennen Handlungsoptionen abgeleitet werden und die Wirkung der Massnahmen (theoretisch) gemessen werden.
 Die **Qualitaet** des Entscheids haengt von drei Aspekten ab:
-    + **Repraesentativitaet**: Analyse wurde mit der korrekten Zielgruppe durchgefuehrt. Je groesser die Zielgruppe, desto besser
-    + **Signifikanz**: Das Resultat ist nicht zufaellig und ist bei einer zweiten Analyse in etwa gleich. Auch hier, je groesser n desto signifikanter
+    + **Repraesentativitaet**: Analyse wurde mit der korrekten Zielgruppe durchgefuehrt. Je groesser die Zielgruppe, desto besser.
+    + **Signifikanz**: Das Resultat ist nicht zufaellig und ist bei einer zweiten Analyse in etwa gleich. Auch hier, je groesser n desto signifikanter.
     + **Relevanz**: Das Resultat der Analyse kann einen Entscheid untermauern und es koennen Prognosen gemacht werden.
 
 \
-Um etwas mit Daten spielen zu koennen, wird ein Dataframe d mit Zufallszahlen generiert (Copy Paste aus dem Skript).
+Um etwas mit Daten spielen zu koennen, wird ein Dataframe d mit Zufallszahlen generiert.
 \
 Im folgenden Plot ist der Lohn nach Alter fuer die Branchen Finance, Industry und State und die Laender England, Schweiz und die USA aufgezeigt. Die Geschlechter werden mit unterschiedlichen Formen der Punkte unterschieden.
 
@@ -346,6 +350,7 @@ qplot(Lohn, data=d, geom="density", fill=Land, alpha=I(.5),
 ```
 
 ## Tests
+Tests werden verwendet um zu bestimmen, ob Stichproben (zwei beim T-Test, mehrere beim Anova-Test) sich statistisch signifikant unterscheiden.
 
 ### T-Test / Anova
 ```{r}
@@ -374,7 +379,7 @@ Der XQuadrat Test wird oft verwendet, wenn n unabhaengige Beobachtungen in m ver
 verkehrsunfaelleProWochentag<-c(80,99,78,89,82,79,53)
 chisq.test(verkehrsunfaelleProWochentag)
 ```
-Da der p-value relativ klein ist, kann die Nullhypothese (Die Haeufigkeit der Verkehrsunfaelle pro Wochentag unterscheidet sich NICHT) verworfen werden, es gibt also Unterschiede zwischen den Wochentagen
+Da der p-value relativ klein ist, kann die Nullhypothese (die Haeufigkeit der Verkehrsunfaelle pro Wochentag unterscheidet sich NICHT) verworfen werden, es gibt also Unterschiede zwischen den Wochentagen
 
 ### Prop-Test
 Der Probability Test kann gut bei Umfragen/Experimenten verwendet werden. Man laesst z.B. 200 Personen Bier mit und ohne Alkohol trinken und erfasst wie oft sie richtig getippt haben. In diesem Beispiel wird angenommen, dass 145 Personen richtig lagen.
@@ -397,7 +402,7 @@ fit <- aov(mpg ~ cyl, data=mtcars)
 summary(fit)
 
 ```
-In Fig 4.3 kann man gut sehen, dass Autos mit Handschaltung (1) tendenziell weiter kommen mit einer Gallone Treibstoff.
+In Fig 4.3 kann man gut sehen, dass Autos mit Handschaltung (1) tendenziell weiter kommen mit einer Gallone Treibstoff als Autos mit einem Automatikgetriebe.
 
 # Tag 5 - Prognosen mittels Regressionsanalyse
 ## Regression
@@ -458,7 +463,7 @@ Mit einer Korrelationsanalyse kann man sich erst mal einen Ueberblick verschaffe
 cor(carsData[, c("mpg", "cyl", "disp", "wt")])
 pairs(~ mpg + cyl + wt + disp, data = carsData)
 ```
-Fig. 5.3 zeigt einen Korrelations Scatter Plot mit etwas mehr Informationsgehalt. Korrelationskoeffizienten, Histogramme mit Density und die Scatterplots die auch in Fig. 5.2 dargestellt sind. Fuer rcorr kann man auch den type="pearson" verwenden was unterschiedliche Korrelationswerte ergibt.
+Fig. 5.3 zeigt einen Korrelations Scatter Plot mit etwas mehr Informationsgehalt. Die Korrelationskoeffizienten, Histogramme mit Density und die Scatterplots die auch in Fig. 5.2 dargestellt sind. Fuer rcorr kann man auch den type="pearson" verwenden was unterschiedliche Korrelationswerte ergibt. Hier muss man je nach Anwendungsfall entscheiden welchen type man verwenden sollte.
 ```{r fig.cap="5.3 Graphische Korrelationsmatrix", fig.align="center"}
 carsDataReduced<-data.frame(carsData$mpg, carsData$cyl, carsData$wt, carsData$disp)
 carsDataMatrix<-data.matrix(carsDataReduced)
@@ -467,9 +472,9 @@ pairs.panels(carsDataReduced, main="Simple Scatterplot Matrix")
 ```
 
 ### Variablen Selektion
-Das Ziel der Variablenselektion ist es, aus einer großen Auswahl von potentiell erklärenden
+Das Ziel der Variablenselektion ist, aus einer großen Auswahl von potentiell erklärenden
 Variablen in einem Datensatz diejenigen herauszufinden, mit denen ein Regressionsmodell
-die Vorhersage der Zielvariablen am besten beschreibt. Die Variablenauswahl erfolgt zum einen aus inhaltlichen Gesichtspunkten und zum anderen mit Hilfe unterschiedlicher statistischer Verfahren. Bekannte Selektionsmethoden sind beispielsweise die Backward-, Forward- oder Stepwise-Verfahren
+die Vorhersage der Zielvariablen am besten beschreibt. Die Variablenauswahl erfolgt zum einen aus inhaltlichen Gesichtspunkten und zum anderen mit Hilfe unterschiedlicher statistischer Verfahren. Bekannte Selektionsmethoden sind beispielsweise die Backward-, Forward- oder das Stepwise-Verfahren
 \
 Mit der Funktion **step()** kann in R eine Variablenselektion durchgefuehrt werden. Je kleiner der AIC-Wert, desto mehr Erklaerungsgehalt besitzt das Modell.
 ```{r}
@@ -501,7 +506,7 @@ Text Mining, seltener auch Text Data Mining oder Textual Data Mining, ist ein Bu
 (Quelle: [Wikipedia](https://de.wikipedia.org/wiki/Text_Mining))
 
 ## Text bereinigung
-Zuerst muessen die Texte bereinigt werden. Alle "nichtssagenden" Woerter (Stopwords) raus wie auch andere unbenoetigte Zeichen (#, @, ., ?, ...). Auch werden die Woerter ge-clustert und ihrem Wortstamm zugeordnet (Stemming).
+Zuerst muessen die Texte bereinigt werden. Alle "nichtssagenden" Woerter (Stopwords) raus wie auch andere unbenoetigte Zeichen (#, @, ., ?, u.s.w.). Auch werden die Woerter ge-clustert und ihrem Wortstamm zugeordnet (Stemming).
 
 ### Stemming
 Als Stemming (Stammformreduktion, Normalformenreduktion) bezeichnet man im Information Retrieval sowie in der linguistischen Informatik ein Verfahren, mit dem verschiedene morphologische Varianten eines Wortes auf ihren gemeinsamen Wortstamm zurückgeführt werden, z. B. die Deklination von Wortes oder Wörter zu Wort und Konjugation von gesehen oder sah zu seh.
@@ -592,7 +597,7 @@ wordcloud(freq.df$word, freq.df$freq,
 ```
 
 ### Commonality
-Eine Comparison Cloud vergleicht zwei (aehnliche) Datasets. Man kann erkennen was in unserem Fall z.B. die Staedt Zuerich und St.Gallen gemeinsam haben.
+Eine Comparison Cloud vergleicht zwei (aehnliche) Datasets. Man kann erkennen was in unserem Fall z.B. die Staedte Zuerich und St.Gallen gemeinsam haben.
 
 ```{r echo=FALSE, fig.cap="6.5 Commonality Cloud", fig.align="center"}
 titles <- c("Zuerich")
@@ -696,7 +701,7 @@ plot(complete_verfahren, which.plots = 2, main = "Complete linkage, standardisie
 ```
 
 # Tag 8 - Decision Trees
-Entscheidungsbaeume sind geordnete, gerichtete Baeume, die der Darstellung von Entscheidungsregeln dienen. Die grafische Darstellung als Baumdiagramm veranschaulicht hierarchisch aufeinanderfolgende Entscheidungen. Sie haben eine Bedeutung in zahlreichen Bereichen, in denen automatisch klassifiziert wird oder aus Erfahrungswissen formale Regeln hergeleitet oder dargestellt werden.
+Entscheidungsbaeume sind geordnete, gerichtete Baeume, die der Darstellung von Entscheidungsregeln dienen. Die grafische Darstellung als Baumdiagramm veranschaulicht hierarchisch aufeinanderfolgende Entscheidungen. Sie haben eine Bedeutung in zahlreichen Bereichen in denen automatisch klassifiziert wird, oder aus Erfahrungswissen formale Regeln hergeleitet oder dargestellt werden.
 
 ## Classification Tree
 Classification Trees haben ein kategorisch abhaengiges Merkmal.
@@ -732,6 +737,7 @@ data_test <- create_train_test(clean_titanic, 0.8, train = FALSE)
 ```
 ```{r}
 nrow(data_train)
+nrow(data_test)
 ```
 Die Daten werden nun mit dem Befehl **rpart** klassifiziert und mit **rpart.plot** in einem Entscheidungsbaum dargestellt.
 ```{r fig.cap="8.1 Classification Tree", fig.align="center"}
@@ -784,7 +790,7 @@ prediction
 
 
 ## Regression Tree
-Regression Trees haben ein kontinuierlich abhaengiges Merkmal.
+Regression Trees haben ein kontinuierlich abhaengiges Merkmal und muessen somit mit der Methode 'anova' berechnet werden.
 \
 
 ```{r fig.cap="8.2 Regression Tree", fig.align="center"}
@@ -796,16 +802,21 @@ rpart.plot(fit)
 mean(data_train$age, na.rm = TRUE)
 ```
 
-In Fig. 8.2 kann man im Root-Leaf sehen, dass das Durchschnittsalter 30 Jahre betraegt. Eher aeltere Leute konnten sich ein Erstklassticket leisten. Von den Ueberlebenden mit Erstklassticket war das Durchschnittsalter 36, von den gestorbenen 43 was 10% aller Passagiere ausmacht.
-\
+In Fig. 8.2 kann man im Root-Leaf sehen, dass
+
+* das Durchschnittsalter 30 Jahre betraegt
+* eher aeltere Leute konnten sich ein Erstklassticket leisten
+* von den Ueberlebenden mit Erstklassticket war das Durchschnittsalter 36
+* von den gestorbenen war das Durchschnittsalter 43, was 10% aller Passagiere ausmacht
+
 parch => Anzahl Eltern/Kinder an Board
 \
 sisbs => Anzahl Geschwister/Lebensgefaehrten
-\
+
 Zuunterst das dritte Blatt von links zeigt Frauen die ueberlebt haben, mit null oder einem Partner unterwegs waren und eins bis zwei Kinder hatten. Das Durchschnittsalter dieser Gruppe ist 20.
 
 ### Prediction
-Zum Vergleich eine Prediction auf dem geschaetzten linearen Modell auf den Trainingsdaten
+Zum Vergleich eine Prediction mit dem geschaetzten linearen Modell auf den Trainingsdaten
 ```{r}
 fit<-lm(age~., data_train)
 predictFemalePassenger<-data.frame(pclass="Lower", sex="female", survived="Survived", sibsp=1, parch=1, fare=12, embarked="S")
