@@ -98,7 +98,7 @@ Es gibt verschiedene Moeglichkeiten Daten zu lesen. Der Readbefehl haengt vom Da
 \newline
 
 ```{r}
-load("D:/Projects/HWZ/lib/Umfrage.rda")
+load("lib/Umfrage.rda")
 ```
 
 ## Uebersicht der Daten
@@ -705,7 +705,7 @@ Im Hintergrund wird ein Csv mit Daten des Titanicungluecks eingelesen. Da die Da
 ```{r echo=FALSE}
 #https://www.guru99.com/r-decision-trees.html
 set.seed(678)
-titanic <-read.csv("D:/Projects/HWZ/lib/titanic.csv")
+titanic <-read.csv("lib/titanic.csv")
 shuffle_index <- sample(1:nrow(titanic))
 titanic <- titanic[shuffle_index, ]
 clean_titanic <- titanic %>%
@@ -820,12 +820,3 @@ predictFemalePassenger<-data.frame(pclass="Lower", sex="female", survived="Survi
 prediction <-predict(fit, predictFemalePassenger, interval="prediction")
 prediction
 ```
-<!-- # Anhang -->
-<!-- ## RMarkdown code -->
-<!-- ```{r comment=''} -->
-<!-- cat(readLines('Conclusions.Rmd'), sep = '\n') -->
-<!-- ``` -->
-<!-- ## Shiny app code -->
-<!-- ```{r comment=''} -->
-<!-- cat(readLines('D:/Projects/HWZ/app.R'), sep = '\n') -->
-<!-- ``` -->
