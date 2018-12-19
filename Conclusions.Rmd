@@ -36,6 +36,10 @@ knitr::opts_chunk$set(echo = TRUE)
 options(warn = -1)
 
 ```
+# Einleitung
+Diese Arbeit wurde in einem **RStudio-Projet** mit **RMarkdown** und **Shiny** umgesetzt. Die Shiny-App ist lediglich ein Proof of Concept fuer mich um mal das Zusammenspiel zu erproben. Sie besteht lediglich aus einem Schieber, mit dem die Anzahl Beobachtungen fuer einen zufaellig generierten Dataframe einstellen werden kann und einem Button, der dann das RMarkdown rendert (knitted). Der komplette **Code** ist auf [Github](https://github.com/knoeflerm/HWZProject) verfuegbar. Die Arbeit sollte somit fuer jeden **reproduzierbar** sein.
+\
+Da RMarkdown alles untereinander rendert, ist es etwas schwieirig was denn nun drei Folien pro Tag sind. Oft wird jedoch auch einfach nur R-Output gezeigt der viel Platz benoetigt, jedoch nur ein kleiner Teil wichtig ist. Trotzdem ist es fuer mich spaeter einfacher die Gedanken nachzuvollziehen, wenn ich den ganzen Output habe.
 
 # Tag 1 - Was ist BigData
 
@@ -809,7 +813,7 @@ prediction <-predict(fit, predictFemalePassenger, interval="prediction")
 prediction
 ```
 
-In den Testdaten ist das Durchschnittsalter dieser Gruppe mit rund 17 Jahren etwas tiefer
+In den Testdaten ist das Durchschnittsalter dieser Gruppe mit rund 17 Jahren etwas tiefer. Das Modell ist wohl noch nicht optimal.
 ```{r}
 fit<-lm(age~., data_test)
 predictFemalePassenger<-data.frame(pclass="Lower", sex="female", survived="Survived", sibsp=1, parch=1, fare=12, embarked="S")
