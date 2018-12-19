@@ -152,7 +152,7 @@ tapply(df$age, df$sex, mean, na.rm=T)
 
 Aus dem Dataframe der **`r nrow(df)`** Datensaetze hat, die ersten **`r subObservations`** Datensaetze nehmen und daraus einen neuen erzeugen.
 ```{r}
-sampleDf<-df[1:minObservations,]
+sampleDf<-df[1:subObservations,]
 sampleDf
 ```
 
@@ -203,21 +203,17 @@ Einige Plots und Histogramme auf dem originalen Dataframe. Da saemtliche Daten i
 hist(df$age, prob=T)
 lines(density(df$age), col="red")
 ```
-
+Man sieht dem Scatterplot in Fig 3.2 an, dass die Daten zufaellig generiert wurden.
 ```{r ,echo=TRUE, fig.cap="Fig. 3.2 Scatterplot Einkommen nach Alter", fig.align="center"}
 plot(df$age, df$income, type="p", main="Scatterplot")
 ```
 
-```{r ,echo=TRUE, fig.cap="Fig. 3.3 Scatterplot", fig.align="center"}
-plot(df$income, main="Scatterplot")
-```
-
-```{r ,echo=TRUE, fig.cap="Fig. 3.4 Histogramm Income", fig.align="center"}
+```{r ,echo=TRUE, fig.cap="Fig. 3.3 Histogramm Income", fig.align="center"}
 hist(df$income, main="Histogramm")
 ```
 
 ## Boxplot
-```{r ,echo=TRUE, fig.cap="Fig. 3.5 Boxplot nach Income", fig.align="center"}
+```{r ,echo=TRUE, fig.cap="Fig. 3.4 Boxplot nach Income", fig.align="center"}
 boxplot(df$income, main="Boxplot")
 ```
 Ein Boxplot beinhaltet fuenf Informationen. Der dicke Strich im Kasten ist der Median, der obere und untere Rand des Kastens zeigen die Quantile Q1 (25% der Werte sind kleiner als dieser Wert) und Q3 (25% der Werte sind groesser als dieser Wert) an, der unterste Strich ist das Minimum und der oberste Strich das Maximum
@@ -698,7 +694,7 @@ plot(complete_verfahren, which.plots = 2, main = "Complete linkage, standardisie
 # Tag 8 - Decision Trees
 Entscheidungsbaeume sind geordnete, gerichtete Baeume, die der Darstellung von Entscheidungsregeln dienen. Die grafische Darstellung als Baumdiagramm veranschaulicht hierarchisch aufeinanderfolgende Entscheidungen. Sie haben eine Bedeutung in zahlreichen Bereichen, in denen automatisch klassifiziert wird oder aus Erfahrungswissen formale Regeln hergeleitet oder dargestellt werden.
 
-## Classification Trees
+## Classification Tree
 Classification Trees haben ein kategorisch abhaengiges Merkmal.
 \
 Im Hintergrund wird ein Csv mit Daten des Titanicungluecks eingelesen. Da die Daten nach Klasse (pclass) sortiert sind, wird der Datensatz erst einmal gemischelt (sample()), es werden unbenoetigte Merkmale entfernt und Faktoren mit verstaendlichem Text versehen. Danach werden die gesaeuberten Daten in einen Trainingsdatensatz (80%) und einen Testdatensatz (20%) geteilt.
@@ -783,7 +779,7 @@ prediction
 ```
 
 
-## Regression Trees
+## Regression Tree
 Regression Trees haben ein kontinuierlich abhaengiges Merkmal.
 \
 
@@ -802,8 +798,9 @@ parch => Anzahl Eltern/Kinder an Board
 \
 sisbs => Anzahl Geschwister/Lebensgefaehrten
 \
-Zuunterst das dritte Blatt von links zeigt Frauen die ueberlebt haben, mit null oder einem Partner unterwegs waren und eins bis zwei Kinder hatten. Das Durchschnittsalter dieser Gruppe war 20.
-\
+Zuunterst das dritte Blatt von links zeigt Frauen die ueberlebt haben, mit null oder einem Partner unterwegs waren und eins bis zwei Kinder hatten. Das Durchschnittsalter dieser Gruppe ist 20.
+
+### Prediction
 Zum Vergleich eine Prediction auf dem geschaetzten linearen Modell auf den Trainingsdaten
 ```{r}
 fit<-lm(age~., data_train)
@@ -812,7 +809,7 @@ prediction <-predict(fit, predictFemalePassenger, interval="prediction")
 prediction
 ```
 
-In den Testdaten ist das Durchschnittsalter dieser Gruppe tiefer
+In den Testdaten ist das Durchschnittsalter dieser Gruppe mit rund 17 Jahren etwas tiefer
 ```{r}
 fit<-lm(age~., data_test)
 predictFemalePassenger<-data.frame(pclass="Lower", sex="female", survived="Survived", sibsp=1, parch=1, fare=12, embarked="S")
