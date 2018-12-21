@@ -37,7 +37,7 @@ options(warn = -1)
 
 ```
 # Einleitung
-Diese Arbeit wurde in einem **RStudio-Project** mit **RMarkdown** und **Shiny** umgesetzt. Die Shiny-App ist lediglich ein Proof of Concept um mal das Zusammenspiel zu erproben. Sie besteht lediglich aus einem Schieber, mit dem die Anzahl Beobachtungen fuer einen zufaellig generierten Dataframe eingestellt werden kann und einem Button, der dann das RMarkdown rendert (knitted). Der komplette **Code** ist auf [Github](https://github.com/knoeflerm/HWZProject) verfuegbar. Die Arbeit sollte somit fuer jeden **reproduzierbar** sein.
+Diese Arbeit wurde in einem **RStudio-Project** mit **RMarkdown** und **Shiny** umgesetzt. Die Shiny-App ist lediglich ein Proof of Concept um mal das Zusammenspiel zu erproben. Sie besteht lediglich aus einem Schieber, mit dem die Anzahl Beobachtungen fuer einen zufaellig generierten Dataframe eingestellt werden kann und einem Button, der dann das RMarkdown rendert (knitted). Das komplette **RMarkdown** wie auch der **Code** ist auf **[Github](https://github.com/knoeflerm/HWZProject)** verfuegbar. Die Arbeit sollte somit fuer jeden **reproduzierbar** sein.
 \
 Da RMarkdown alles untereinander rendert, ist es etwas schwieirig was denn nun drei Folien pro Tag sind. Oft wird jedoch auch einfach nur R-Output gezeigt der viel Platz benoetigt, jedoch nur ein kleiner Teil wichtig ist. Trotzdem ist es fuer mich spaeter einfacher die Gedanken nachzuvollziehen, wenn ich den ganzen Output habe.
 
@@ -117,7 +117,7 @@ head(Umfrage,5) # zeigt die ersten x Datensaetze an (Default ist 6)
 ### Zufallswerte
 Im Folgenden wird ein Data Frame mit verschiedenen, rein zufaelligen Werten erzeugt. Entweder wird ein Observations count via **Shiny App** als Parameter ins **RMarkdown** gegeben, ansonsten wird ein Defaultwert genommen.
 ```{r}
-minObservations<-100
+minObservations<-300
 subObservations<-10
 if (params$n == "NA" | params$n < minObservations) {
   observationCount<-minObservations
@@ -267,7 +267,7 @@ Hypothesen dienen der **Management Beratung**, oder sie kommen sogar aus dem Man
 * Nun kann ein **Entscheid** formuliert werden. Besagt der Test, dass die Hypothese signifikant ist, koennen Handlungsoptionen abgeleitet werden und die Wirkung der Massnahmen (theoretisch) gemessen werden.
 Die **Qualitaet** des Entscheids haengt von drei Aspekten ab:
     + **Repraesentativitaet**: Analyse wurde mit der korrekten Zielgruppe durchgefuehrt. Je groesser die Zielgruppe, desto besser.
-    + **Signifikanz**: Das Resultat ist nicht zufaellig und ist bei einer zweiten Analyse in etwa gleich. Auch hier, je groesser n desto signifikanter.
+    + **Signifikanz**: Das Resultat ist nicht zufaellig und ist bei einer zweiten Analyse in etwa gleich. Auch hier, je groesser n desto signifikanter das Resultat.
     + **Relevanz**: Das Resultat der Analyse kann einen Entscheid untermauern und es koennen Prognosen gemacht werden.
 
 \
@@ -407,7 +407,7 @@ In Fig 4.3 kann man gut sehen, dass Autos mit Handschaltung (1) tendenziell weit
 # Tag 5 - Prognosen mittels Regressionsanalyse
 ## Regression
 ### Korrelation
-Die **Korrelation** von -0.852 zwischen 'Miles per Gallon' und 'Cylinder' ist nicht gerade gross, fuer dieses Beispiel jedoch ausreichend. Die negative Korrelation bedeutet, dass je mehr 'Cylinder', desto weniger weit kommt ein Auto mit einer Gallone.
+Die **Korrelation** von -0.852 zwischen 'Miles per Gallon' und 'Cylinder' ist nicht gerade gross, fuer dieses Beispiel jedoch ausreichend. Die negative Korrelation bedeutet, dass je mehr 'Cylinder' ein Auto hat, desto weniger weit kommt es mit einer Gallone.
 \ Das Package 'mtcars' ist [hier](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html) beschrieben.
 ```{r}
 carsData<-mtcars
@@ -458,7 +458,7 @@ predict(fitCars, newdata=predsCars, interval="prediction")
 ```
 
 ### Korrelations-Analyse
-Mit einer Korrelationsanalyse kann man sich erst mal einen Ueberblick verschaffen wie gut oder schlecht die Daten miteinander korrelieren. Je naeher die Werte bei eins, desto besser korrelieren sie. In Fig. 5.2 ist eigentlich links unten und gegen rechts oben zweimal die gleiche Information enthalten, einfach mit vertauschten Achsen. Die Plots sind gespiegelt.
+Mit einer Korrelationsanalyse kann man sich erst mal einen Ueberblick verschaffen wie gut oder schlecht die Daten miteinander korrelieren. Je naeher die Werte bei eins, desto besser korrelieren sie. In Fig. 5.2 ist links unten und gegen rechts oben zweimal die gleiche Information enthalten, einfach mit vertauschten Achsen. Die Plots sind gespiegelt.
 ```{r fig.cap="5.2 Simple Korrelationsmatrix", fig.align="center"}
 cor(carsData[, c("mpg", "cyl", "disp", "wt")])
 pairs(~ mpg + cyl + wt + disp, data = carsData)
@@ -660,7 +660,7 @@ In Fig. 7.1 sind alle Werte gegeneinander paarweise aufgeplottet. Man kann sehen
 pairs(coping, panel = panel.smooth)
 ```
 
-Untenstehende Warnings ignoriere ich mal gekonnt, da sie fuer meine Ausfuehrungen irrelevant sind. Die Screeplots in Fig. 7.2 und 7.3 zeigen klar den Knick bei drei faktoren, das Modell empfiehlt jedoch nur zwei Faktoren zu machen.
+Untenstehende Warnings ignoriere ich mal gekonnt, da sie fuer meine Ausfuehrungen irrelevant sind. Die Screeplots in Fig. 7.2 und 7.3 zeigen klar den Knick bei drei Faktoren, das Modell empfiehlt jedoch nur zwei Faktoren zu machen.
 ```{r echo=FALSE, fig.cap="7.2 Parallel Analysis", fig.align="center"}
 fa.parallel(coping) #PC ist Hauptkomponentenanalyse, FA Faktoranalyse
 ```
